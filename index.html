@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Coreorm by coreorm</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Coreorm</h1>
+        <p>The CoreORM framework</p>
+        <p class="view"><a href="https://github.com/coreorm/coreorm">View the Project on GitHub <small>coreorm/coreorm</small></a></p>
+        <ul>
+          <li><a href="https://github.com/coreorm/coreorm/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/coreorm/coreorm/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/coreorm/coreorm">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="coreormframework" class="anchor" href="#coreormframework"><span class="octicon octicon-link"></span></a>CoreORM/Framework</h1>
+
+<p>PHP Object Relational Mapping package with DAO and managed thin models, supports read/write, multiple adaptors and more.
+'''NOTE''' currently only supports MySQL with fully ORM support, but dao can still be used on sqlite.</p>
+
+<h4>
+<a name="composer" class="anchor" href="#composer"><span class="octicon octicon-link"></span></a>composer</h4>
+
+<pre><code>run
+    composer install --prefer-dist
+</code></pre>
+
+<h4>
+<a name="note-run-composer-install-to-enable-autoload-if-not-all-files-are-loading-run" class="anchor" href="#note-run-composer-install-to-enable-autoload-if-not-all-files-are-loading-run"><span class="octicon octicon-link"></span></a>NOTE: run composer install to enable autoload, if not all files are loading, run</h4>
+
+<pre><code>composer dump-autoload
+</code></pre>
+
+<h4>
+<a name="unit-tests" class="anchor" href="#unit-tests"><span class="octicon octicon-link"></span></a>unit tests:</h4>
+
+<p>make sure you do
+    chmod +x tests/phpunit so it can run tests</p>
+
+<p>also, run the following sql in local (127.0.0.1) mysql instance to test adaptors</p>
+
+<pre><code>    CREATE DATABASE `coreorm` CHARACTER SET utf8;
+    USE `coreorm`;
+    GRANT all ON `coreorm`.* TO core@localhost IDENTIFIED BY 'test';
+
+# also add a slave user for it so we can simulate slave test
+
+    GRANT select ON `coreorm`.* TO core_slave@localhost IDENTIFIED BY 'test';
+
+# to test sqlite, make sure you do the following:
+    // under tests folder, run
+    mkdir tmp;chmod 775 tmp;
+</code></pre>
+
+<h3>
+<a name="setup-the-config-this-way" class="anchor" href="#setup-the-config-this-way"><span class="octicon octicon-link"></span></a>setup the config this way.</h3>
+
+<h4>
+<a name="run-time-config-using-setdbconfig" class="anchor" href="#run-time-config-using-setdbconfig"><span class="octicon octicon-link"></span></a>run time config using setDbConfig:</h4>
+
+<pre><code>    setDbConfig('default', [default db adaptor name]);  // we need a default always
+    // next, set up the database adaptors in this way:
+    setDbConfig('database', array(
+        [adaptor name] =&gt; (array) [$options]
+    ));
+    // use mysql as an example:
+    setDbConfig('database', array(
+        'main' =&gt; array(
+            'dbname' =&gt; 'my_db_name',
+            'user' =&gt; 'db_user_name',
+            'pass' =&gt; 'db_password',
+            'host' =&gt; '127.0.0.1',
+            'port' =&gt; 3306, // optional
+            'cache' =&gt; false, // default is false, true to enable cache in memory - NOTE: will increase memory usage
+        ),
+        'db1' =&gt; array(
+            ...
+        ),
+    ));
+</code></pre>
+
+<h4>
+<a name="generating-models" class="anchor" href="#generating-models"><span class="octicon octicon-link"></span></a>generating models</h4>
+
+<p>Run the following commands at project root</p>
+
+<pre><code>    chmod +x modeller
+</code></pre>
+
+<p>to generate model, make sure you put a config.php file somewhere, see example below:</p>
+
+<pre><code>    &lt;?php
+    $dir = realpath(__DIR__ . '/Model/');
+    return array(
+        'database' =&gt; array(
+            'dbname' =&gt; 'model_test',
+            'user' =&gt; 'model',
+            'adaptor' =&gt; 'MySQL',
+            'pass' =&gt; 'test',
+            'host' =&gt; '127.0.0.1'
+        ),
+        'path' =&gt; $dir,
+        'namespace' =&gt; 'Example\\Model',
+        'model' =&gt; array(
+            'user' =&gt; array(
+                'relations' =&gt; [
+                    array(
+                        'table' =&gt; 'login',
+                        'join' =&gt; 'INNER',
+                        'type' =&gt; 'S',
+                        'on' =&gt; array(
+                            // support multiple on conditions
+                            // must be from left =&gt; right
+                            'id' =&gt; 'user_id'
+                        ),
+                        'condition' =&gt; ''
+                    ),
+                    array(
+                        'table' =&gt; 'attachment',
+                        'join' =&gt; 'LEFT',
+                        'type' =&gt; 'M',
+                        'on' =&gt; array(
+                            'id' =&gt; 'user_id'
+                        ),
+                        'condition' =&gt; ''
+                    )
+                ],
+            ),
+            'login' =&gt; array(
+            ),
+            'attachment' =&gt; array(
+                'class' =&gt; 'File'   // let's use a different name for the class...
+            ),
+        )
+    );
+</code></pre>
+
+<p>then just run</p>
+
+<pre><code>    ./modeller config.php
+</code></pre>
+
+<p>all the models will be generated in the directory you specified in the configuration file.</p>
+
+<h3>
+<a name="api" class="anchor" href="#api"><span class="octicon octicon-link"></span></a>API:</h3>
+
+<pre><code>dao-&gt;writeModel()
+dao-&gt;readModel()
+dao-&gt;deleteModel()
+dao-&gt;readModels()
+</code></pre>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/coreorm">coreorm</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
