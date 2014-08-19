@@ -17,9 +17,6 @@
         "phpunit/phpunit": "~4.0"
     },
     "autoload": {
-        "classmap": [
-            "src/Core.php"
-        ],
         "psr-4": {
             "CoreORM\\": "src"
         }
