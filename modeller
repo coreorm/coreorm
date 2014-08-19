@@ -1,0 +1,11 @@
+#!/usr/bin/php
+<?php
+/**
+ * modeller
+ */
+namespace CoreORM;
+require_once __DIR__ . '/src/autoload.php';
+use CoreORM\Utility\ModelGenerator;
+// run model gen
+ModelGenerator::main($argv);
+?>
