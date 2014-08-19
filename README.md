@@ -51,9 +51,57 @@ to test sqlite, make sure you do the following:
     ));
 
 #### generating models
-use Example/model.sql to create db for modeling.
-see Example/model.json for example of model structure.
-// also make sure you added the extra autoload setting for autoloading the generated models
+Run the following commands at project root
+    chmod +x modeller
+to generate model, make sure you put a config.php file somewhere, see example below:
+    <?php
+    $dir = realpath(__DIR__ . '/Model/');
+    return array(
+        'database' => array(
+            'dbname' => 'model_test',
+            'user' => 'model',
+            'adaptor' => 'MySQL',
+            'pass' => 'test',
+            'host' => '127.0.0.1'
+        ),
+        'path' => $dir,
+        'namespace' => 'Example\\Model',
+        'model' => array(
+            'user' => array(
+                'relations' => [
+                    array(
+                        'table' => 'login',
+                        'join' => 'INNER',
+                        'type' => 'S',
+                        'on' => array(
+                            // support multiple on conditions
+                            // must be from left => right
+                            'id' => 'user_id'
+                        ),
+                        'condition' => ''
+                    ),
+                    array(
+                        'table' => 'attachment',
+                        'join' => 'LEFT',
+                        'type' => 'M',
+                        'on' => array(
+                            'id' => 'user_id'
+                        ),
+                        'condition' => ''
+                    )
+                ],
+            ),
+            'login' => array(
+            ),
+            'attachment' => array(
+                'class' => 'File'   // let's use a different name for the class...
+            ),
+        )
+    );
+
+then just run
+    ./modeller config.php
+all the models will be generated in the directory you specified in the configuration file.
 
 
 ### API:
