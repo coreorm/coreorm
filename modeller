@@ -4,7 +4,7 @@
  * modeller
  */
 namespace CoreORM;
-require_once __DIR__ . '/src/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 use CoreORM\Utility\ModelGenerator;
 // run model gen
 ModelGenerator::main($argv);

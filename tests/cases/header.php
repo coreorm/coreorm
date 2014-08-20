@@ -4,5 +4,5 @@
  *
  */
 require_once __DIR__ . '/../../vendor/autoload.php';
-// enable debug mode
-debug(true);
+// disable debug mode for faster testing and easier overall testing
+debug(getenv('ENABLE_DEBUG') != 'no');

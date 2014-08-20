@@ -10,9 +10,18 @@ $sqliteDb = new \CoreORM\Adaptor\Sqlite(array(
 ));
 // test if already there...
 $user = $sqliteDb->describe('user');
-empty($user) or exit('Db is setup, you may start testing' . PHP_EOL);
+empty($user) or exit('Db is already setup, you may start testing' . PHP_EOL);
 // next, setup file
 $sqlFile = __DIR__ . '/model_test.sqlite.sql';
 $sql = file_get_contents($sqlFile);
-$sqliteDb->query($sql);
-exit('Db is setup, you may start testing' . PHP_EOL);
+if (!empty($sql)) {
+    $sqls = explode(';', $sql);
+    foreach ($sqls as $sql) {
+        $sql = trim($sql);
+        if (!empty($sql)) {
+            $stmt = $sqliteDb->query($sql);
+        }
+    }
+}
+//\CoreORM\Utility\Debug::output();
+exit('Db is setup now, you may start testing' . PHP_EOL);

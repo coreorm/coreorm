@@ -1,18 +1,24 @@
 <?php
+//return;
 /**
  * pdo adaptor
  *
  */
 require_once __DIR__ . '/../header.php';
+$modelDir = realpath(__DIR__ . '/../../support/Example/Model.Sqlite') . '/';
+require_once $modelDir . 'User.php';
+require_once $modelDir . 'Combination.php';
+require_once $modelDir . 'Login.php';
+require_once $modelDir . 'File.php';
 use CoreORM\Model;
-use Example\Model\User;
+use \Example\Model\User;
 use \Example\Model\File;
 use \CoreORM\Utility\Debug;
 use Example\Model\Combination;
 /**
  * test core
  */
-class TestModel extends PHPUnit_Framework_TestCase
+class TestSqliteModel extends PHPUnit_Framework_TestCase
 {
     /**
      * @var CoreORM\Dao\Orm
@@ -23,11 +29,8 @@ class TestModel extends PHPUnit_Framework_TestCase
     {
         setDbConfig('database', array(
             'orm_test' => array(
-                "dbname" => "model_test",
-                "user" => "model",
-                "adaptor" => "MySQL",
-                "pass" => "test",
-                "host" => "127.0.0.1"
+                "dbname" => __DIR__ . '/../../support/tmp/model_test.sqlite',
+                "adaptor" => CoreORM\Adaptor\Pdo::ADAPTOR_SQLITE,
             )
         ));
         setDbConfig('default', 'orm_test');
@@ -79,7 +82,8 @@ class TestModel extends PHPUnit_Framework_TestCase
 
         // 3. insert a single new one (and remember to remove it)
         $file = new File();
-        $file->setUserId(2)
+        $file->setId(100)
+             ->setUserId(2)
              ->setSize(123.12)
              ->setFilename('test.file');
         $this->dao->writeModel($file);

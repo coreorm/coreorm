@@ -7,6 +7,7 @@
  */
 namespace CoreORM;
 
+use CoreORM\Adaptor\Pdo;
 use CoreORM\Exception\Dao;
 use CoreORM\Exception\Model as ModelException;
 use CoreORM\Utility\Assoc;
@@ -793,17 +794,27 @@ class Model
     /**
      * compose the write sql
      * NOTE: this ones only saves itself
+     * @param string $type
      * @return array
      * @throws Exception\Model
      */
-    public function composeWriteSQL()
+    public function composeWriteSQL($type = Pdo::ADAPTOR_MYSQL)
     {
         $fields = array();
         $bind = array();
         foreach ($this->fields as $field => $info) {
             if (isset($this->data[$field])) {
                 $fName = $info['field_map'];
-                $fields[] = $fName . ' = ?';
+                // remove the table part if sqlite
+                if ($type == Pdo::ADAPTOR_SQLITE) {
+                    $tmp = explode('.', $fName);
+                    $fName = $tmp[1];
+                }
+                if ($this->state == self::STATE_NEW) {
+                    $fields[] = $fName;
+                } else {
+                    $fields[] = $fName . ' = ?';
+                }
                 $bind[] = $this->data[$field];
             }
         }
@@ -824,9 +835,23 @@ class Model
             if (empty($where)) {
                 throw new \CoreORM\Exception\Model('Update SQL requires valid primary key');
             }
-            $where = ' WHERE ' . implode(' AND ', $where)  . ' LIMIT 1';
+            $where = ' WHERE ' . implode(' AND ', $where);
+            if ($type == Pdo::ADAPTOR_MYSQL) {
+                $where .= ' LIMIT 1';
+            }
         }
-        $sql .= PHP_EOL . ' SET ' . implode(', ' . PHP_EOL, $fields) . $where;
+        if ($this->state == self::STATE_NEW) {
+            // use prepared field set
+            $values = array();
+            $cnt = count($fields);
+            for ($i = 0; $i < $cnt; $i ++) {
+                $values[] = '?';
+            }
+            $sql .= PHP_EOL . '(' . implode(', ', $fields) .
+                    ') VALUES (' . implode(', ', $values) . ')';
+        } else {
+            $sql .= PHP_EOL . ' SET ' . implode(', ' . PHP_EOL, $fields) . $where;
+        }
         return array(
             'sql' => $sql,
             'bind' => $bind,
@@ -837,10 +862,11 @@ class Model
 
     /**
      * compose the deletion sql here
+     * @param string $type
      * @return array
      * @throws Exception\Model
      */
-    public function composeDeleteSQL()
+    public function composeDeleteSQL($type = Pdo::ADAPTOR_MYSQL)
     {
         $bind = array();
         $sql = 'DELETE FROM ' . $this->table;
@@ -855,7 +881,11 @@ class Model
         if (empty($where)) {
             throw new \CoreORM\Exception\Model('Update SQL requires valid primary key');
         }
-        $sql .= ' WHERE ' . implode(' AND ', $where)  . ' LIMIT 1';
+        $sql .= ' WHERE ' . implode(' AND ', $where);
+        if ($type == Pdo::ADAPTOR_MYSQL) {
+            // since sqlite doesn't support limit in delete out of the box
+            $sql .= ' LIMIT 1';
+        }
         return array(
             'sql' => $sql,
             'bind' => $bind,

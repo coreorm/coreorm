@@ -9,6 +9,18 @@ use CoreORM\Exception\Adaptor;
 
 class MySQL extends Pdo
 {
+    /**
+     * the type
+     * @var string
+     */
+    protected $type = Pdo::ADAPTOR_MYSQL;
+
+
+    /**
+     * constructor
+     * @param array $options
+     * @throws \CoreORM\Exception\Adaptor
+     */
     public function __construct($options = array())
     {
         if (!isset($options['host']) ||

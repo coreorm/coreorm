@@ -1,12 +1,9 @@
 <?php
-$dir = realpath(__DIR__ . '/Model/');
+$dir = realpath(__DIR__ . '/Model.Sqlite/');
 return array(
     'database' => array(
-        'dbname' => 'model_test',
-        'user' => 'model',
-        'adaptor' => 'MySQL',
-        'pass' => 'test',
-        'host' => '127.0.0.1'
+        'dbname' => __DIR__ . '/../tmp/model_test.sqlite',
+        'adaptor' => CoreORM\Adaptor\Pdo::ADAPTOR_SQLITE
     ),
     'path' => $dir,
     'namespace' => 'Example\\Model',

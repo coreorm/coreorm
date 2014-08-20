@@ -21,6 +21,13 @@ abstract class Pdo
 
 
     /**
+     * adaptor type
+     * @var string
+     */
+    protected $type = null;
+
+
+    /**
      * pdo statement object
      * @var \PDOStatement
      */
@@ -52,6 +59,17 @@ abstract class Pdo
         }
 
     }// end pdoAdaptor
+
+
+    /**
+     * get the current adaptor type
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+
+    }// end getType
 
 
     /**
@@ -172,13 +190,12 @@ abstract class Pdo
             }
             // otherwise, check error
             $err = 'unknown PDO error';
+            $code = 100;
             if (is_object($this->pdo)) {
                 $err  = (array) $this->pdo->errorInfo();
                 $code = !empty($err[1]) ? (int) $err[1] : null;
                 $err  = !empty($err[2]) ? $err[2] : null;
             }
-
-            $code = 100;
             if (is_object($this->stmt)) {
                 $err  = $this->stmt->errorInfo();
                 $err  = !empty($err[2]) ? $err[2] : null;

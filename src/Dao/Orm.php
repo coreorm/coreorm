@@ -148,7 +148,7 @@ class Orm extends Base
     public function writeModel(Model $model)
     {
         // compose sql
-        $sqlGroup = $model->composeWriteSQL();
+        $sqlGroup = $model->composeWriteSQL($this->adaptor()->getType());
         $this->query($sqlGroup['sql'], $sqlGroup['bind']);
         // then gave the model and id
         $this->readModel($model);
@@ -164,7 +164,7 @@ class Orm extends Base
     public function deleteModel(Model $model)
     {
         // compose sql
-        $sqlGroup = $model->composeDeleteSQL();
+        $sqlGroup = $model->composeDeleteSQL($this->adaptor()->getType());
         return $this->query($sqlGroup['sql'], $sqlGroup['bind']);
 
     }// end deleteModel

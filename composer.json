@@ -21,8 +21,7 @@
             "src/Core.php"
         ],
         "psr-4": {
-            "CoreORM\\": "src",
-            "Example\\": "tests/support/Example"
+            "CoreORM\\": "src"
         }
     },
     "minimum-stability": "dev"

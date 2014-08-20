@@ -4,6 +4,13 @@ use CoreORM\Exception\Adaptor;
 class Sqlite extends Pdo
 {
     /**
+     * the type
+     * @var string
+     */
+    protected $type = Pdo::ADAPTOR_SQLITE;
+
+
+    /**
      * the constructor
      * @param array $options
      * @throws Adaptor
