@@ -46,7 +46,7 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
     GRANT select ON `coreorm`.* TO core_slave@localhost IDENTIFIED BY 'test';
 
 # to test sqlite, make sure you do the following:
-    // under tests folder, run
+    // under tests/support folder, run
     mkdir tmp;chmod 775 tmp;
 ```
 
