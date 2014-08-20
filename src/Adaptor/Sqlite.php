@@ -108,7 +108,6 @@ class Sqlite extends Pdo
             // set it back
             $field = $tmpField;
         }
-
         return $details;
 
     }// end describe
