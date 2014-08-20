@@ -9,11 +9,11 @@ Simple add the following into your composer.json
 
 ```
     "require": {
-            "coreorm/framework": "*"    // put in the version you need
+            "coreorm/framework": "*"
     },
     "autoload": {
         "files": [
-            "vendor/coreorm/framework/src/Core.php" // this needs to be loaded first
+            "vendor/coreorm/framework/src/Core.php"
         ]
     }
 ```
