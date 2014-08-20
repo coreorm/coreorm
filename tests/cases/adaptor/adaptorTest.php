@@ -64,6 +64,8 @@ class TestDaoAdaptor extends PHPUnit_Framework_TestCase
         // add table...
         $sql = 'drop table `test`;';
         $dao->query($sql);
+        // clear all adaptors
+        CoreORM\Adaptor\Pdo::purgePdoAdaptor();
         // at the end show queries run
         Debug::output();
 

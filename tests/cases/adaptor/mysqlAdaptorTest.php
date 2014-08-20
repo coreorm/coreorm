@@ -9,8 +9,19 @@ use CoreORM\Adaptor\MySQL;
 /**
  * test core
  */
-class TestPdo extends PHPUnit_Framework_TestCase
+class TestPdoMySQL extends PHPUnit_Framework_TestCase
 {
+    public function tearDown()
+    {
+        parent::tearDown();
+        Pdo::purgePdoAdaptor();
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+        Pdo::purgePdoAdaptor();
+    }
 
     public function testBaseAdaptor()
     {
@@ -29,6 +40,7 @@ class TestPdo extends PHPUnit_Framework_TestCase
         ));
         // and both should be using the same PDO...
         $pdos = Pdo::getPdoAdaptor();
+        dump($pdos);
         $this->assertEquals(count($pdos), 1);
         // now add yet a new one with different config
         new MySQL(array(

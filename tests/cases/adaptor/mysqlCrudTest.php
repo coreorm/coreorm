@@ -8,7 +8,7 @@ use CoreORM\Adaptor\MySQL;
 /**
  * test core
  */
-class TestCrud extends PHPUnit_Framework_TestCase
+class TestCrudMySQL extends PHPUnit_Framework_TestCase
 {
     protected $opts = array(
         'host' => '127.0.0.1',

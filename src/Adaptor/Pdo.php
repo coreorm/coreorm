@@ -87,6 +87,7 @@ abstract class Pdo
             foreach (self::$pdoAdapters as &$pdo) {
                 $pdo = null;
             }
+            self::$pdoAdapters = array();
         }
 
     }// end getPdoAdaptor
