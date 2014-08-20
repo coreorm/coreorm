@@ -50,15 +50,17 @@ class Sqlite extends Pdo
 
     /**
      * quote name with corresponding enclosure chars
+     * NOTE: this is now updated to be compatible with
+     * MySQL, if it doesn't work, update your sqlite lib
      * @param string $name the name
      * @return string
      */
     public function nameQuote($name)
     {
         if (strpos($name, '.') !== false) {
-            $name = str_replace('.', '","',  $name);
+            $name = str_replace('.', '`,`',  $name);
         }
-        return '"' . $name . '"';
+        return '`' . $name . '`';
 
     }// end nameQuote
 

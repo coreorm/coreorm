@@ -28,9 +28,9 @@ class TestCrudSqlite extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         // run a quick table here
-        $sql = 'CREATE TABLE "test" (
-        "id" INTEGER PRIMARY KEY,
-        "test" TEXT
+        $sql = 'CREATE TABLE `test` (
+        `id` INTEGER PRIMARY KEY,
+        `test` TEXT
         )';
         $this->adaptor = new Sqlite($this->opts);
         $this->adaptor->query($sql);
@@ -39,8 +39,14 @@ class TestCrudSqlite extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->adaptor->query('DROP TABLE "test";');
+        $this->adaptor->query('DROP TABLE `test`;');
         unset($this->adaptor);
+    }
+
+    public function testDescribe()
+    {
+        $tableInfo = $this->adaptor->describe('test');
+        $this->assertNotEmpty($tableInfo);
     }
 
     public function testInsert()
@@ -73,7 +79,7 @@ class TestCrudSqlite extends PHPUnit_Framework_TestCase
         $id = $this->testInsert();
         $this->adaptor->delete('test', 'id=?', array($id));
         // read - it should NOT be there any more
-        $data = $this->adaptor->fetchOne('SELECT "test" FROM "test" WHERE id = ?', array($id));
+        $data = $this->adaptor->fetchOne('SELECT `test` FROM `test` WHERE id = ?', array($id));
         $this->assertEmpty($data);
     }
 

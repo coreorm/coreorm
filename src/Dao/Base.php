@@ -399,7 +399,7 @@ class Base
      */
     public function describe($tableName)
     {
-        if ($this->adaptor() instanceof MySQL) {
+        if (method_exists($this->adaptor(), 'describe')) {
             return $this->adaptor()->describe($tableName);
         }
 

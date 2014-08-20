@@ -37,6 +37,12 @@ class TestCrudMySQL extends PHPUnit_Framework_TestCase
         $this->adaptor->query($sql);
     }
 
+    public function testDescribe()
+    {
+        $tableInfo = $this->adaptor->describe('test');
+        $this->assertNotEmpty($tableInfo);
+    }
+
     public function tearDown()
     {
         parent::tearDown();
