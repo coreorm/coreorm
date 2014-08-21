@@ -176,4 +176,23 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
 
     }
 
+    public function testReadAdvanced()
+    {
+        // 1st test order
+        $attachments = $this->dao->readModels(new File(), null, null, array(File::FIELD_SIZE => 'DESC'), 3);
+        $this->assertTrue(count($attachments) == 3);
+        $currentFSize = 0;
+        foreach ($attachments as $file) {
+            if ($file instanceof File) {
+                if (empty($currentFSize)) {
+                    $currentFSize = $file->getSize();
+                } else {
+                    $this->assertGreaterThan($file->getSize(), $currentFSize);
+                    $currentFSize = $file->getSize();
+                }
+            }
+        }
+
+    }
+
 }
