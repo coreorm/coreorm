@@ -2,6 +2,7 @@
 namespace CoreORM\Adaptor;
 use CoreORM\Core;
 use CoreORM\Exception\Adaptor;
+use CoreORM\Utility\Assoc;
 use CoreORM\Utility\Debug;
 use CoreORM\Model;
 
@@ -408,10 +409,11 @@ abstract class Pdo
      * fetch all fetchColumn
      * @param $sql
      * @param array $bind
+     * @param assoc $options[key_field => string,]
      * @return mixed|string
      * @throws \CoreORM\Exception\Adaptor
      */
-    public function fetchColumn($sql, $bind = array())
+    public function fetchColumn($sql, $bind = array(), $options = array() )
     {
         // cached?
         if ($this->useCache) {
@@ -428,8 +430,15 @@ abstract class Pdo
                 // start fetching
                 $this->stmt->setFetchMode(\PDO::FETCH_ASSOC);
                 $result = array();
+                // result assoc key option
+                $keyField = Assoc::get($options, 'key_field');
                 while ($row = $this->stmt->fetchColumn()) {
-                    $result[] = $row;
+                    if(!empty($keyField)){
+                        $result[Assoc::get($row,$keyField)] = $row;
+                    }
+                    else{
+                        $result[] = $row;
+                    }
                 }
                 // if cache...
                 if ($this->useCache) {

@@ -354,13 +354,14 @@ class Base
      * @param $sql
      * @param array $bind
      * @param bool $useSlave
+     * @param assoc $options[key_field => string,]
      * @return mixed|string
      * @throws \CoreORM\Exception\Adaptor
      */
-    public function fetchColumn($sql, $bind = array(), $useSlave = false)
+    public function fetchColumn($sql, $bind = array(), $useSlave = false, $options = array())
     {
         $adaptor = $useSlave ? $this->slaveAdaptor() : $this->adaptor();
-        return $adaptor->fetchColumn($sql, $bind);
+        return $adaptor->fetchColumn($sql, $bind, $options);
 
     }// end fetchColumn
 
