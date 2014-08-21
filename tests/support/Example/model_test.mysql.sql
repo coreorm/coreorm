@@ -23,21 +23,6 @@ CREATE TABLE `attachment` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-LOCK TABLES `attachment` WRITE;
-/*!40000 ALTER TABLE `attachment` DISABLE KEYS */;
-
-INSERT INTO `attachment` (`id`, `user_id`, `filename`, `size`)
-VALUES
-  (1,1,'test.jpg',23),
-  (2,1,'abc.pdf',34.21),
-  (3,2,'low.mov',3020.32),
-  (4,3,'page.txt',302.12),
-  (5,2,'flow.diagram',23.11);
-
-/*!40000 ALTER TABLE `attachment` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
 # Dump of table login
 # ------------------------------------------------------------
 
@@ -49,18 +34,6 @@ CREATE TABLE `login` (
   `password` varchar(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-LOCK TABLES `login` WRITE;
-/*!40000 ALTER TABLE `login` DISABLE KEYS */;
-
-INSERT INTO `login` (`user_id`, `username`, `password`)
-VALUES
-  (1,'jayf','asfsafadf'),
-  (2,'brucel','ljalfasdf');
-
-/*!40000 ALTER TABLE `login` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 # Dump of table user
 # ------------------------------------------------------------
@@ -74,18 +47,6 @@ CREATE TABLE `user` (
   `birthdate` date DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-
-INSERT INTO `user` (`id`, `name`, `address`, `birthdate`)
-VALUES
-  (1,'Jay Faye','80 Illust Rd. Sydney','1981-03-21'),
-  (2,'Bruce L','300 Pitt, Sydney','1977-02-21'),
-  (3,'Fry Steve','1 Infinite Loop, Redmond','1972-11-23');
-
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 # Dump of table combined_key_table
 # ------------------------------------------------------------
