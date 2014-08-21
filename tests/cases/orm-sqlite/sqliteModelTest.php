@@ -25,22 +25,35 @@ class TestSqliteModel extends PHPUnit_Framework_TestCase
      */
     protected $dao;
 
+    public function tearDown()
+    {
+        parent::tearDown();
+        $sql = 'DROP TABLE "attachment";
+                DROP TABLE "combined_key_table";
+                DROP TABLE "user";
+                DROP TABLE "login";';
+        $sqls = explode(';', $sql);
+        foreach ($sqls as $sql) {
+            $sql = trim($sql);
+            if (!empty($sql)) {
+                $this->dao->query($sql);
+            }
+        }
+    }
+
     public function setUp()
     {
+        parent::setUp();
         setDbConfig('database', array(
             'orm_test' => array(
-                "dbname" => __DIR__ . '/../../support/tmp/model_test.sqlite',
+                'dbname' => ':memory:',  // let's use in memory sqlite
                 "adaptor" => CoreORM\Adaptor\Pdo::ADAPTOR_SQLITE,
             )
         ));
         setDbConfig('default', 'orm_test');
         $this->dao = new \CoreORM\Dao\Orm();
         // clear all and then install all
-        $sql = 'DROP TABLE "attachment";
-                DROP TABLE "combined_key_table";
-                DROP TABLE "user";
-                DROP TABLE "login";
-                CREATE TABLE "attachment" (
+        $sql = 'CREATE TABLE "attachment" (
                   "id" int(11)  NOT NULL ,
                   "user_id" int(11) NOT NULL,
                   "filename" varchar(100) DEFAULT NULL,

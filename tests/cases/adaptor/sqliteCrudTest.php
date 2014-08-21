@@ -5,16 +5,13 @@
  */
 require_once __DIR__ . '/../header.php';
 use CoreORM\Adaptor\Sqlite;
-$dir = realpath(__DIR__ . '/../../') . '/support/tmp/';
-is_writable($dir) or exit('[ERROR!] Please make sure ' . $dir . ' is created and writable' . PHP_EOL);
-define('SQLITE_DB', $dir . 'test.sqlite3');
 /**
  * test core
  */
 class TestCrudSqlite extends PHPUnit_Framework_TestCase
 {
     protected $opts = array(
-        'dbname' => SQLITE_DB,
+        'dbname' => ':memory:',
     );
 
     /**

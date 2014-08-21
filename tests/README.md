@@ -23,7 +23,9 @@ Now you can run
 ./modeller tests/support/Example/config.mysql.php
 ```
 
-For sqlite database, just make sure support/tmp is writable, then go to support directory, run
+Note: if you don't want to test model generator, you can avoid setting up sqlite, as long as the directory /support/tmp is writable, it will be just fine.
+
+Otherwise, For sqlite database, just make sure support/tmp is writable, then go to support directory, run
 ```
 php sqlitesetup.php
 ```
