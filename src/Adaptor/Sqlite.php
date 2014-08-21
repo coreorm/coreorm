@@ -1,7 +1,7 @@
 <?php
 namespace CoreORM\Adaptor;
 use CoreORM\Exception\Adaptor;
-class Sqlite extends Pdo
+class Sqlite extends Orm
 {
     /**
      * the type

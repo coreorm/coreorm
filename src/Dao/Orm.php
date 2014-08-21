@@ -24,7 +24,7 @@ class Orm extends Base
         if (!empty($relations)) {
             $limit = 0;
         }
-        $sqlGroup = $model->composeReadSQL(null, null, null, $limit);
+        $sqlGroup = $this->adaptor()->composeReadSQL($model, null, null, null, $limit);
         $result = $this->fetchAll($sqlGroup['sql'], $sqlGroup['bind'], $useSlave);
         $modelFetched = false;
         $relatedModels = array();
@@ -76,7 +76,7 @@ class Orm extends Base
                                $orderBy = array(), $limit = null, $useSlave = false)
     {
         // use a soft limit to compose (using fetch row) - so no limit is to be passed in.
-        $sqlGroup = $model->composeReadSQL($condition, $bind, $orderBy);
+        $sqlGroup = $this->adaptor()->composeReadSQL($model, $condition, $bind, $orderBy);
         $modelFetched = array();
         $relations = $model->activeRelations();
         $relatedModels = array();
@@ -139,6 +139,7 @@ class Orm extends Base
 
     }// end readModel
 
+
     /**
      * NOTE: for security/performance concern
      * we DO NOT allow chain save of the sub models,
@@ -148,7 +149,7 @@ class Orm extends Base
     public function writeModel(Model $model)
     {
         // compose sql
-        $sqlGroup = $model->composeWriteSQL($this->adaptor()->getType());
+        $sqlGroup = $this->adaptor()->composeWriteSQL($model, $this->adaptor()->getType());
         $this->query($sqlGroup['sql'], $sqlGroup['bind']);
         // then gave the model and id
         $this->readModel($model);
@@ -164,7 +165,7 @@ class Orm extends Base
     public function deleteModel(Model $model)
     {
         // compose sql
-        $sqlGroup = $model->composeDeleteSQL($this->adaptor()->getType());
+        $sqlGroup = $this->adaptor()->composeDeleteSQL($model, $this->adaptor()->getType());
         return $this->query($sqlGroup['sql'], $sqlGroup['bind']);
 
     }// end deleteModel

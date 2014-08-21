@@ -3,6 +3,7 @@ namespace CoreORM\Adaptor;
 use CoreORM\Core;
 use CoreORM\Exception\Adaptor;
 use CoreORM\Utility\Debug;
+use CoreORM\Model;
 
 /**
  * PDO adaptor for DAO
@@ -604,6 +605,42 @@ abstract class Pdo
         return array('sql' => $sql, 'bind' => $bind);
 
     }// end breakDownData
+
+    // orm that needs to be defined.
+    /**
+     * get the select fields from a given model
+     * @param Model $model
+     * @return array
+     */
+    abstract public function selectFields(Model $model);
+    /**
+     * return a sql for reading object(s)
+     * NOTE: this will return sql and bind
+     * @param Model $model
+     * @param array $extraCondition
+     * @param array $extraBind
+     * @param array $orderBy
+     * @param int $limit
+     * @return array
+     */
+    abstract public function composeReadSQL(Model $model, $extraCondition = array(), $extraBind = array(), $orderBy = array(), $limit = 0);
+    /**
+     * compose the write sql
+     * NOTE: this ones only saves itself
+     * @param Model $model
+     * @param string $type
+     * @return array
+     * @throws \CoreORM\Exception\Model
+     */
+    abstract public function composeWriteSQL(Model $model, $type = Pdo::ADAPTOR_MYSQL);
+    /**
+     * compose the deletion sql here
+     * @param Model $model
+     * @param string $type
+     * @return array
+     * @throws \CoreORM\Exception\Model
+     */
+    abstract public function composeDeleteSQL(Model $model, $type = Pdo::ADAPTOR_MYSQL);
 
 }// end Pdo
 ?>

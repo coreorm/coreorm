@@ -8,7 +8,6 @@
 namespace CoreORM;
 
 use CoreORM\Adaptor\Pdo;
-use CoreORM\Exception\Dao;
 use CoreORM\Exception\Model as ModelException;
 use CoreORM\Utility\Assoc;
 use CoreORM\Utility\Date;
@@ -590,10 +589,15 @@ class Model
     /**
      * add join to the object
      * @param Model $model
-     * @return $this
+     * @return $this|array
      */
-    public function shouldJoin(Model $model)
+    public function shouldJoin(Model $model = null)
     {
+        // default return should joins
+        if (empty($model)) {
+            return $this->shouldJoin;
+        }
+        // otherwise set
         $tableName = $model->table();
         $this->shouldJoin[$tableName] = $tableName;
         return $this;
@@ -643,54 +647,55 @@ class Model
     }// end partialSelect
 
 
-    public function selectFields()
+    /**
+     * get current partial fields
+     * @return array
+     */
+    public function partialFields()
     {
-        // compose from table information itself
-        $tables = array("`{$this->table}`");
-        $condition = array();
-        if (!empty($this->partialFields)) {
-            // use partial fields plus the id fields
-            $fields = array_merge($this->partialFields, $this->key);
-        } else {
-            $fields = array_keys($this->fields());
-        }
-        // compose fields...
-        $ArTmp = array();
-        foreach ($fields as $f) {
-            if (!empty($this->fields[$f]['field_map'])) {
-                $ArTmp[$f] = "{$this->fields[$f]['field_map']} AS {$this->fields[$f]['field_key']}";
-            }
-        }
-        // next, check the joins...
-        if (!empty($this->shouldJoin)) {
-            foreach ($this->shouldJoin as $table) {
-                if ($this->relations[$table]['class']) {
-                    $class = $this->relations[$table]['class'];
-                    $obj = new $class;
-                    if ($obj instanceof Model) {
-                        $arResult = $obj->selectFields();
-                        if (!empty($arResult['fields'])) {
-                            $ArTmp = Assoc::merge($ArTmp, $arResult['fields']);
-                        }
-                    }
-                    unset($obj);
-                    // get table joins...
-                    $join = $this->relations[$table]['join'];
-                    $tables[] = $join;
-                    // condition?
-                    if (!empty($this->relations[$table]['condition'])) {
-                        $condition[] = $this->relations[$table]['condition'];
-                    }
-                }
-            }
-        }
-        return array(
-            'fields' => $ArTmp,
-            'tables' => $tables,
-            'condition' => $condition
-        );
+        return $this->partialFields;
 
-    }// end selectFields
+    }// end partialFields
+
+
+    /**
+     * get the key fields
+     * @return array
+     */
+    public function key()
+    {
+        return $this->key;
+
+    }// end key
+
+
+    /**
+     * get the data
+     * @param str $key if null, return all
+     * @return array
+     */
+    public function data($key = null)
+    {
+        if (empty($key)) {
+            return $this->data;
+        }
+        if (!empty($this->data[$key])) {
+            return $this->data[$key];
+        }
+
+    }// end data
+
+
+    /**
+     * is the field set in data?
+     * @param $field
+     * @return bool
+     */
+    public function dataIsSet($field)
+    {
+        return isset($this->data[$field]);
+
+    }// end dataIsSet
 
 
     /**
@@ -721,177 +726,6 @@ class Model
         return $where;
 
     }// end getCriteriaPair
-
-
-    /**
-     * return a sql for reading object(s)
-     * NOTE: this will return sql and bind
-     * @param array $extraCondition
-     * @param array $extraBind
-     * @param array $orderBy in format of array(field => ASC/DESC);
-     * @param int $limit
-     * @return array
-     */
-    public function composeReadSQL($extraCondition = array(), $extraBind = array(), $orderBy = array(), $limit = 0)
-    {
-        $sql = 'SELECT ';
-        $bind = array();
-        $arTmp = $this->selectFields();
-        $fields = $arTmp['fields'];
-        $tables = $arTmp['tables'];
-        $condition = $arTmp['condition'];
-        $cPair = $this->getCriteriaPair();
-        // figure out pair
-        if (!empty($cPair)) {
-            foreach ($cPair as $name => $val) {
-                $condition[] = "{$name} = ?";
-                $bind[] = $val;
-            }
-        }
-        if (!empty($extraCondition) && is_array($extraCondition)) {
-            $condition = array_merge($condition, $extraCondition);
-        }
-        if (!empty($extraBind) && is_array($extraBind)) {
-            $bind = array_merge($bind, $extraBind);
-        }
-        // limit?
-        $limit = (int) $limit;
-        if (!empty($limit)) {
-            $limit = ' LIMIT ' . $limit;
-        } else {
-            $limit = null;
-        }
-        // next, get relations
-        $tables = implode(PHP_EOL, $tables);
-        $condition = implode(' AND ' . PHP_EOL, $condition);
-        // order by
-        $strOrderBy = null;
-        if (!empty($orderBy)) {
-            $tmp = array();
-            foreach ($orderBy as $field => $order) {
-                $tmp[] = "{$field} {$order}";
-            }
-            $strOrderBy = implode(', ', $tmp);
-            $strOrderBy = " ORDER BY {$strOrderBy} ";
-            unset($tmp, $orderBy);
-        }
-        $condition = trim(($condition));
-        if (!empty($condition)) {
-            $condition = "WHERE {$condition}";
-        }
-
-        // start combining the sql...
-        $sql .= implode(',' . PHP_EOL, $fields) . PHP_EOL .
-                ' FROM ' . $tables . PHP_EOL . $condition . PHP_EOL . $strOrderBy . $limit;
-        return array(
-            'sql' => $sql,
-            'bind' => $bind,
-        );
-
-    }// end composeReadSQL
-
-
-    /**
-     * compose the write sql
-     * NOTE: this ones only saves itself
-     * @param string $type
-     * @return array
-     * @throws Exception\Model
-     */
-    public function composeWriteSQL($type = Pdo::ADAPTOR_MYSQL)
-    {
-        $fields = array();
-        $bind = array();
-        foreach ($this->fields as $field => $info) {
-            if (isset($this->data[$field])) {
-                $fName = $info['field_map'];
-                // remove the table part if sqlite
-                if ($type == Pdo::ADAPTOR_SQLITE) {
-                    $tmp = explode('.', $fName);
-                    $fName = $tmp[1];
-                }
-                if ($this->state == self::STATE_NEW) {
-                    $fields[] = $fName;
-                } else {
-                    $fields[] = $fName . ' = ?';
-                }
-                $bind[] = $this->data[$field];
-            }
-        }
-        // compose the keys
-        if ($this->state == self::STATE_NEW) {
-            $sql = 'INSERT INTO ' . $this->table;
-            $where = '';
-        } else {
-            $sql = 'UPDATE ' . $this->table;
-            $where = array();
-            foreach ($this->key as $field) {
-                if (isset($this->data[$field])) {
-                    $fName = $this->fields[$field]['field_map'];
-                    $where[] = $fName . ' = ?';
-                    $bind[] = $this->data[$field];
-                }
-            }
-            if (empty($where)) {
-                throw new \CoreORM\Exception\Model('Update SQL requires valid primary key');
-            }
-            $where = ' WHERE ' . implode(' AND ', $where);
-            if ($type == Pdo::ADAPTOR_MYSQL) {
-                $where .= ' LIMIT 1';
-            }
-        }
-        if ($this->state == self::STATE_NEW) {
-            // use prepared field set
-            $values = array();
-            $cnt = count($fields);
-            for ($i = 0; $i < $cnt; $i ++) {
-                $values[] = '?';
-            }
-            $sql .= PHP_EOL . '(' . implode(', ', $fields) .
-                    ') VALUES (' . implode(', ', $values) . ')';
-        } else {
-            $sql .= PHP_EOL . ' SET ' . implode(', ' . PHP_EOL, $fields) . $where;
-        }
-        return array(
-            'sql' => $sql,
-            'bind' => $bind,
-        );
-
-    }// end composeWriteSQL
-
-
-    /**
-     * compose the deletion sql here
-     * @param string $type
-     * @return array
-     * @throws Exception\Model
-     */
-    public function composeDeleteSQL($type = Pdo::ADAPTOR_MYSQL)
-    {
-        $bind = array();
-        $sql = 'DELETE FROM ' . $this->table;
-        $where = array();
-        foreach ($this->key as $field) {
-            if (isset($this->data[$field])) {
-                $fName = $this->fields[$field]['field_map'];
-                $where[] = $fName . ' = ?';
-                $bind[] = $this->data[$field];
-            }
-        }
-        if (empty($where)) {
-            throw new \CoreORM\Exception\Model('Update SQL requires valid primary key');
-        }
-        $sql .= ' WHERE ' . implode(' AND ', $where);
-        if ($type == Pdo::ADAPTOR_MYSQL) {
-            // since sqlite doesn't support limit in delete out of the box
-            $sql .= ' LIMIT 1';
-        }
-        return array(
-            'sql' => $sql,
-            'bind' => $bind,
-        );
-
-    }// end composeDeleteSQL
 
 
     /**

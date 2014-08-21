@@ -37,6 +37,33 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
         ));
         setDbConfig('default', 'orm_test');
         $this->dao = new \CoreORM\Dao\Orm();
+        // clear all test data
+        $sql = "
+        DELETE FROM `attachment`;
+        DELETE FROM `user`;
+        DELETE FROM `login`;
+        DELETE FROM `combined_key_table`;
+
+        INSERT INTO `attachment` (`id`, `user_id`, `filename`, `size`)
+        VALUES
+          (1,1,'test.jpg',23),
+          (2,1,'abc.pdf',34.21),
+          (3,2,'low.mov',3020.32),
+          (4,3,'page.txt',302.12),
+          (5,2,'flow.diagram',23.11);
+
+        INSERT INTO `login` (`user_id`, `username`, `password`)
+        VALUES
+        (1,'jayf','asfsafadf'),
+          (2,'brucel','ljalfasdf');
+
+        INSERT INTO `user` (`id`, `name`, `address`, `birthdate`)
+        VALUES
+          (1,'Jay Faye','80 Illust Rd. Sydney','1981-03-21'),
+          (2,'Bruce L','300 Pitt, Sydney','1977-02-21'),
+          (3,'Fry Steve','1 Infinite Loop, Redmond','1972-11-23');
+        ";
+        $this->dao->query($sql);
     }
 
     public function testCRUD()

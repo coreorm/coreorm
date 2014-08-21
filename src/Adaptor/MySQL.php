@@ -4,10 +4,9 @@
  * @uses Pdo
  */
 namespace CoreORM\Adaptor;
-use CoreORM\Core;
 use CoreORM\Exception\Adaptor;
 
-class MySQL extends Pdo
+class MySQL extends Orm
 {
     /**
      * the type
