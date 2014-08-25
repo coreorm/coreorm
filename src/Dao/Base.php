@@ -79,10 +79,10 @@ class Base
     {
         if (empty($name)) {
             // use default
-            $name = getDbConfig('default');
+            $name = getDbConfig('default_database');
             // still empty?
             if (empty($name)) {
-                throw new Dao("Database name is required or run setDbConfig('default', " .
+                throw new Dao("Database name is required or run setDbConfig('default_database', " .
                               " default_db_name) to set default");
             }
         }
@@ -180,7 +180,7 @@ class Base
         if (empty($name)) {
             $name = $this->masterDbName;
             if (empty($name)) {
-                throw new Dao("Database name is required or run setDbConfig('default', " .
+                throw new Dao("Database name is required or run setDbConfig('default_database', " .
                     " default_db_name) to set default");
             }
         }

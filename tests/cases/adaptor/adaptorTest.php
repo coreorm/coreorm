@@ -16,7 +16,7 @@ class TestDaoAdaptor extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         // build db confs in memory
-        setDbConfig('default', 'db1');
+        setDbConfig('default_database', 'db1');
         setDbConfig('database', array(
             'db1' => array(
                 'adaptor' => Pdo::ADAPTOR_MYSQL,

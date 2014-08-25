@@ -50,7 +50,7 @@ class TestSqliteModel extends PHPUnit_Framework_TestCase
                 "adaptor" => CoreORM\Adaptor\Pdo::ADAPTOR_SQLITE,
             )
         ));
-        setDbConfig('default', 'orm_test');
+        setDbConfig('default_database', 'orm_test');
         $this->dao = new \CoreORM\Dao\Orm();
         // clear all and then install all
         $sql = 'CREATE TABLE "attachment" (

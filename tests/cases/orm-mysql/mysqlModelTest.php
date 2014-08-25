@@ -35,7 +35,7 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
                 "host" => "127.0.0.1"
             )
         ));
-        setDbConfig('default', 'orm_test');
+        setDbConfig('default_database', 'orm_test');
         $this->dao = new \CoreORM\Dao\Orm();
         // clear all test data
         $sql = "
