@@ -52,21 +52,21 @@
     }
 </code></pre>
 
-<h4>
-<a name="composer" class="anchor" href="#composer"><span class="octicon octicon-link"></span></a>composer</h4>
+<h3>
+<a name="install-dependencies" class="anchor" href="#install-dependencies"><span class="octicon octicon-link"></span></a>Install dependencies</h3>
 
 <pre><code>run
     composer install --prefer-dist
 </code></pre>
 
-<h4>
-<a name="note-run-composer-install-to-enable-autoload-if-not-all-files-are-loading-run" class="anchor" href="#note-run-composer-install-to-enable-autoload-if-not-all-files-are-loading-run"><span class="octicon octicon-link"></span></a>NOTE: run composer install to enable autoload, if not all files are loading, run</h4>
+<h3>
+<a name="note-run-composer-install-to-enable-autoload-if-not-all-files-are-loading-run" class="anchor" href="#note-run-composer-install-to-enable-autoload-if-not-all-files-are-loading-run"><span class="octicon octicon-link"></span></a>NOTE: run composer install to enable autoload, if not all files are loading, run</h3>
 
 <pre><code>composer dump-autoload
 </code></pre>
 
-<h4>
-<a name="unit-tests" class="anchor" href="#unit-tests"><span class="octicon octicon-link"></span></a>unit tests:</h4>
+<h3>
+<a name="unit-tests" class="anchor" href="#unit-tests"><span class="octicon octicon-link"></span></a>unit tests:</h3>
 
 <p>make sure you do
     chmod +x tests/phpunit so it can run tests</p>
@@ -87,10 +87,7 @@
 </code></pre>
 
 <h3>
-<a name="setup-the-config-this-way" class="anchor" href="#setup-the-config-this-way"><span class="octicon octicon-link"></span></a>setup the config this way.</h3>
-
-<h4>
-<a name="run-time-config-using-setdbconfig" class="anchor" href="#run-time-config-using-setdbconfig"><span class="octicon octicon-link"></span></a>run time config using setDbConfig:</h4>
+<a name="setup-the-config-this-way-runtime" class="anchor" href="#setup-the-config-this-way-runtime"><span class="octicon octicon-link"></span></a>setup the config this way (runtime).</h3>
 
 <pre><code>    setDbConfig('default', [default db adaptor name]);  // we need a default always
     // next, set up the database adaptors in this way:
@@ -113,8 +110,8 @@
     ));
 </code></pre>
 
-<h4>
-<a name="generating-models" class="anchor" href="#generating-models"><span class="octicon octicon-link"></span></a>generating models</h4>
+<h3>
+<a name="generating-models" class="anchor" href="#generating-models"><span class="octicon octicon-link"></span></a>generating models</h3>
 
 <p>Run the following commands at project root</p>
 
@@ -175,6 +172,44 @@
 </code></pre>
 
 <p>all the models will be generated in the directory you specified in the configuration file.</p>
+
+<h3>
+<a name="summary-of-common-apis" class="anchor" href="#summary-of-common-apis"><span class="octicon octicon-link"></span></a>Summary of common APIs</h3>
+
+<ul>
+<li>Orm::writeModel(Model $model)</li>
+</ul><pre><code>$Orm = new Orm();
+$model = new User();
+$model-&gt;setName('John Doe')-&gt;setAddress('1 Sydney Rd. Sydney, NSW 2000, Australia);
+$Orm-&gt;writeModel($model);
+</code></pre>
+
+<ul>
+<li>Orm::readModel(Model $model, $useSlave = false)</li>
+</ul><pre><code>$Orm = new Orm();
+$model = new User();
+$model-&gt;setId(123);
+$Orm-&gt;readModel($model);
+echo $model-&gt;getName();
+</code></pre>
+
+<ul>
+<li>Orm::readModels(Model $model, $condition = array(), $bind = array(), $orderBy = array(), $limit = null, $useSlave = false)</li>
+</ul><pre><code>$Orm = new Orm();
+$model = new User();
+$models = $Orm-&gt;writeModels($model, array(User::Field_NAME . " LIKE '%Jo%'"));
+foreach ($models as $user) {
+    echo $user-&gt;getName();
+}
+</code></pre>
+
+<ul>
+<li>Orm::deleteModel(Model $model)</li>
+</ul><pre><code>$Orm = new Orm();
+$model = new User();
+$model-&gt;setId(123);
+$Orm-&gt;deleteModel($model);
+</code></pre>
 
 <h3>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples:</h3>
