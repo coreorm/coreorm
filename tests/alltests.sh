@@ -20,4 +20,9 @@ echo 'ORM Tests [mysql]'
 echo '=================='
 ./phpunit cases/orm-mysql
 
+echo 'ORM Tests [model]'
+echo '=================='
+./phpunit cases/model
+
 export SET ENABLE_DEBUG=yes
+

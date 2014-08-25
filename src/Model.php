@@ -507,16 +507,23 @@ class Model
     /**
      * get table data out
      * @param bool $withRelations
+     * @param array $filters - format: array(field => call back function)
      * @return array
      */
-    public function toArray($withRelations = false)
+    public function toArray($withRelations = false, $filters = array())
     {
         // 1st of all, just internal ones
         $export = array();
         $data   = $this->data;
         foreach ($this->fields as $field => $info) {
             if (isset($data[$field])) {
-                $export[$info['field']] = $this->rawGetFieldData($field);
+                $v = $this->rawGetFieldData($field);
+                $fieldMap = $info['field_map'];
+                if (!empty($filters[$fieldMap])) {
+                    $filter = $filters[$fieldMap];
+                    $v = call_user_func_array($filter, array($v));
+                }
+                $export[$info['field']] = $v;
                 unset($data[$field]);
             }
         }
@@ -524,13 +531,13 @@ class Model
         if ($withRelations) {
             foreach ($data as $key => $val) {
                 if ($val instanceof Model) {
-                    $export[$key] = $val->toArray($withRelations);
+                    $export[$key] = $val->toArray($withRelations, $filters);
                 }
                 if (is_array($val)) {
                     // we only ever loop one level
                     foreach ($val as $k => $v) {
                         if ($v instanceof Model) {
-                            $export[$key][$k] = $v->toArray($withRelations);
+                            $export[$key][$k] = $v->toArray($withRelations, $filters);
                         } else {
                             $export[$key][$k] = $v;
                         }
@@ -547,11 +554,12 @@ class Model
     /**
      * export to json
      * @param bool $withRelations
+     * @param array $filters
      * @return string
      */
-    public function toJson($withRelations = false)
+    public function toJson($withRelations = false, $filters = array())
     {
-        return json_encode($this->toArray($withRelations));
+        return json_encode($this->toArray($withRelations, $filters));
 
     }// end toJson
 
