@@ -385,21 +385,22 @@ $constants
 
     protected function composeGetter($camelName, $fieldInfo)
     {
-        $func = "parent::rawGetFieldData('{$fieldInfo['field_key']}', \$default)";
+        $func = "parent::rawGetFieldData('{$fieldInfo['field_key']}', \$default, \$filter)";
         $extraParam = null;
         $hint = null;
         if ($fieldInfo['type'] == 'datetime') {
             $extraParam = "\$format = 'jS F, Y H:i', ";
-            $func = "parent::formatDateByName('{$fieldInfo['field_key']}', \$format, \$default)";
+            $func = "parent::formatDateByName('{$fieldInfo['field_key']}', \$format, \$default, \$filter)";
             $hint = "\n     * @param string \$format";
         }
         return "
     /**
      * retrieve {$camelName}{$hint}
      * @param mixed \$default
+     * @param array \$filter filter call back function
      * @return {$fieldInfo['type']}
      */
-    public function get{$camelName}({$extraParam}\$default = null)
+    public function get{$camelName}({$extraParam}\$default = null, \$filter = array())
     {
         return {$func};
     }";

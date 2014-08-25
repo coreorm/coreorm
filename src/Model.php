@@ -255,11 +255,12 @@ class Model
      * @param $name
      * @param string $format
      * @param null $default
-     * @return string
+     * @param array $filter
+     * @return float|int|mixed|null|string
      */
-    protected function formatDateByName($name, $format = 'js F, Y H:i', $default = null)
+    protected function formatDateByName($name, $format = 'js F, Y H:i', $default = null, $filter = array())
     {
-        $val = $this->rawGetFieldData($name);
+        $val = $this->rawGetFieldData($name, null, $filter);
         if ($format == false) {
             // just return the raw form
             return $val;
@@ -517,11 +518,16 @@ class Model
         $data   = $this->data;
         foreach ($this->fields as $field => $info) {
             if (isset($data[$field])) {
-                $v = $this->rawGetFieldData($field);
                 $fieldMap = $info['field_map'];
                 if (!empty($filters[$fieldMap])) {
                     $filter = $filters[$fieldMap];
-                    $v = call_user_func_array($filter, array($v));
+                    if (is_string($filter)) {
+                        $filter = array($filter);
+                    }
+                    // pass to native filter function
+                    $v = $this->rawGetFieldData($field, null, $filter);
+                } else {
+                    $v = $this->rawGetFieldData($field);
                 }
                 $export[$info['field']] = $v;
                 unset($data[$field]);

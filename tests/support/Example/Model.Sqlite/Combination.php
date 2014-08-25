@@ -127,38 +127,42 @@ class Combination extends Model
     /**
      * retrieve Id1
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getId1($default = null)
+    public function getId1($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('combined_key_table_id_1', $default);
+        return parent::rawGetFieldData('combined_key_table_id_1', $default, $filter);
     }
     /**
      * retrieve Id2
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getId2($default = null)
+    public function getId2($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('combined_key_table_id_2', $default);
+        return parent::rawGetFieldData('combined_key_table_id_2', $default, $filter);
     }
     /**
      * retrieve Name
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return string
      */
-    public function getName($default = null)
+    public function getName($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('combined_key_table_name', $default);
+        return parent::rawGetFieldData('combined_key_table_name', $default, $filter);
     }
     /**
      * retrieve UserId
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getUserId($default = null)
+    public function getUserId($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('combined_key_table_user_id', $default);
+        return parent::rawGetFieldData('combined_key_table_user_id', $default, $filter);
     }
     /**
      * get related Login model

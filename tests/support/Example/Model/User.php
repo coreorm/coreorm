@@ -139,39 +139,43 @@ class User extends Model
     /**
      * retrieve Id
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getId($default = null)
+    public function getId($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('user_id', $default);
+        return parent::rawGetFieldData('user_id', $default, $filter);
     }
     /**
      * retrieve Name
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return string
      */
-    public function getName($default = null)
+    public function getName($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('user_name', $default);
+        return parent::rawGetFieldData('user_name', $default, $filter);
     }
     /**
      * retrieve Address
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return string
      */
-    public function getAddress($default = null)
+    public function getAddress($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('user_address', $default);
+        return parent::rawGetFieldData('user_address', $default, $filter);
     }
     /**
      * retrieve Birthdate
      * @param string $format
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return datetime
      */
-    public function getBirthdate($format = 'jS F, Y H:i', $default = null)
+    public function getBirthdate($format = 'jS F, Y H:i', $default = null, $filter = array())
     {
-        return parent::formatDateByName('user_birthdate', $format, $default);
+        return parent::formatDateByName('user_birthdate', $format, $default, $filter);
     }
     /**
      * get related Login model

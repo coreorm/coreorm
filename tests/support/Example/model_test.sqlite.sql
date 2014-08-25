@@ -1,7 +1,7 @@
-DROP TABLE "attachment";
-DROP TABLE "combined_key_table";
-DROP TABLE "user";
-DROP TABLE "login";
+DROP TABLE IF EXISTS "attachment";
+DROP TABLE IF EXISTS "combined_key_table";
+DROP TABLE IF EXISTS "user";
+DROP TABLE IF EXISTS "login";
 CREATE TABLE "attachment" (
   "id" int(11)  NOT NULL ,
   "user_id" int(11) NOT NULL,

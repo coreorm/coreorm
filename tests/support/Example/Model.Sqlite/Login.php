@@ -76,28 +76,31 @@ class Login extends Model
     /**
      * retrieve UserId
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getUserId($default = null)
+    public function getUserId($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('login_user_id', $default);
+        return parent::rawGetFieldData('login_user_id', $default, $filter);
     }
     /**
      * retrieve Username
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return string
      */
-    public function getUsername($default = null)
+    public function getUsername($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('login_username', $default);
+        return parent::rawGetFieldData('login_username', $default, $filter);
     }
     /**
      * retrieve Password
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return string
      */
-    public function getPassword($default = null)
+    public function getPassword($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('login_password', $default);
+        return parent::rawGetFieldData('login_password', $default, $filter);
     }
 }

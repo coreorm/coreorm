@@ -95,37 +95,41 @@ class File extends Model
     /**
      * retrieve Id
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getId($default = null)
+    public function getId($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('attachment_id', $default);
+        return parent::rawGetFieldData('attachment_id', $default, $filter);
     }
     /**
      * retrieve UserId
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return int
      */
-    public function getUserId($default = null)
+    public function getUserId($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('attachment_user_id', $default);
+        return parent::rawGetFieldData('attachment_user_id', $default, $filter);
     }
     /**
      * retrieve Filename
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return string
      */
-    public function getFilename($default = null)
+    public function getFilename($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('attachment_filename', $default);
+        return parent::rawGetFieldData('attachment_filename', $default, $filter);
     }
     /**
      * retrieve Size
      * @param mixed $default
+     * @param array $filter filter call back function
      * @return float
      */
-    public function getSize($default = null)
+    public function getSize($default = null, $filter = array())
     {
-        return parent::rawGetFieldData('attachment_size', $default);
+        return parent::rawGetFieldData('attachment_size', $default, $filter);
     }
 }
