@@ -140,8 +140,6 @@ then just run
 all the models will be generated in the directory you specified in the configuration file.
 
 
-### API:
-    dao->writeModel()
-    dao->readModel()
-    dao->deleteModel()
-    dao->readModels()
+### Examples:
+
+For examples, visit the [CoreORM\Examples](https://github.com/coreorm/example)
