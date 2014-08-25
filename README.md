@@ -19,7 +19,7 @@ Simple add the following into your composer.json
 ```
 
 
-#### composer
+### Install dependencies
 
 ```
 run
@@ -27,10 +27,10 @@ run
 ```
 
 
-#### NOTE: run composer install to enable autoload, if not all files are loading, run
+### NOTE: run composer install to enable autoload, if not all files are loading, run
     composer dump-autoload
 
-#### unit tests:
+### unit tests:
 make sure you do
     chmod +x tests/phpunit so it can run tests
 
@@ -50,8 +50,7 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
     mkdir tmp;chmod 775 tmp;
 ```
 
-### setup the config this way.
-#### run time config using setDbConfig:
+### setup the config this way (runtime).
 
 ```
     setDbConfig('default', [default db adaptor name]);  // we need a default always
@@ -75,7 +74,7 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
     ));
 ```
 
-#### generating models
+### generating models
 Run the following commands at project root
 
 ```
