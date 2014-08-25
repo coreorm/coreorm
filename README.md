@@ -139,6 +139,39 @@ then just run
 
 all the models will be generated in the directory you specified in the configuration file.
 
+### Summary of common APIs
+* Orm::writeModel(Model $model)
+```
+$Orm = new Orm();
+$model = new User();
+$model->setName('John Doe')->setAddress('1 Sydney Rd. Sydney, NSW 2000, Australia);
+$Orm->writeModel($model);
+```
+* Orm::readModel(Model $model, $useSlave = false)
+```
+$Orm = new Orm();
+$model = new User();
+$model->setId(123);
+$Orm->readModel($model);
+echo $model->getName();
+```
+* Orm::readModels(Model $model, $condition = array(), $bind = array(), $orderBy = array(), $limit = null, $useSlave = false)
+```
+$Orm = new Orm();
+$model = new User();
+$models = $Orm->writeModels($model, array(User::Field_NAME . " LIKE '%Jo%'"));
+foreach ($models as $user) {
+    echo $user->getName();
+}
+```
+* Orm::deleteModel(Model $model)
+```
+$Orm = new Orm();
+$model = new User();
+$model->setId(123);
+$Orm->deleteModel($model);
+```
+
 
 ### Examples:
 
