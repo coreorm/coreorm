@@ -93,7 +93,7 @@ class Model
      * @param $data
      * @param int $state
      */
-    public function __construct($data = array(), $state = null)
+    public function __construct($data = array(), $state = self::STATE_NEW)
     {
         if (!empty($data) && !empty($state)) {
             $this->rawSetUp($data, $state);
@@ -195,26 +195,7 @@ class Model
         $val = Assoc::get($this->data, $name, $default);
         // filter: to string value only
         if (!empty($filter)) {
-            foreach ($filter as $method) {
-                // if array - use array as object, method
-                if (is_array($method)) {
-                    if (method_exists($method[0], $method[1])) {
-                        $val = call_user_func_array($method, array($val));
-                    }
-                } else {
-                    // direct access to single function
-                    if (function_exists($method)) {
-                        $val = $method($val);
-                    }
-                    // otherwise if it's :: - class function
-                    if (strpos($method, '::') !== false) {
-                        $tmp = explode('::', $method);
-                        if (method_exists($tmp[0], $tmp[1])) {
-                            $val = call_user_func_array($tmp, array($val));
-                        }
-                    }
-                }
-            }
+            $val = $this->filter($filter, $val);
         }
         // continue with val
         if (empty($val) && !empty($default)) {
@@ -251,6 +232,39 @@ class Model
 
 
     /**
+     * filter the given value
+     * @param $filter
+     * @param $val
+     */
+    public function filter($filter, $val)
+    {
+        $filter = (array) $filter;
+        foreach ($filter as $method) {
+            // if array - use array as object, method
+            if (is_array($method)) {
+                if (method_exists($method[0], $method[1])) {
+                    $val = call_user_func_array($method, array($val));
+                }
+            } else {
+                // direct access to single function
+                if (function_exists($method)) {
+                    $val = $method($val);
+                }
+                // otherwise if it's :: - class function
+                if (strpos($method, '::') !== false) {
+                    $tmp = explode('::', $method);
+                    if (method_exists($tmp[0], $tmp[1])) {
+                        $val = call_user_func_array($tmp, array($val));
+                    }
+                }
+            }
+        }
+        return $val;
+
+    }// end filter
+
+
+    /**
      * format the date (use it for mysql date)
      * @param $name
      * @param string $format
@@ -260,12 +274,16 @@ class Model
      */
     protected function formatDateByName($name, $format = 'js F, Y H:i', $default = null, $filter = array())
     {
-        $val = $this->rawGetFieldData($name, null, $filter);
+        $val = $this->rawGetFieldData($name);
         if ($format == false) {
             // just return the raw form
             return $val;
         }
-        return Date::formatDatetime($val, $format, $default);
+        $val = Date::formatDatetime($val, $format, $default);
+        if (!empty($filter)) {
+            $val = $this->filter($filter, $val);
+        }
+        return $val;
 
     }// end formatDateByName
 

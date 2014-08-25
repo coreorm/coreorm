@@ -41,4 +41,16 @@ class TestModel extends PHPUnit_Framework_TestCase
         $obj = json_decode($jsonHtml);
         $this->assertEquals($obj->name, $nameHtml);
     }
+
+    public function testDatetime()
+    {
+        $date = date('Y-m-d H:i:s');
+        $user = new User(array(
+            'user_id' => 12,
+            'user_birthdate' => $date
+        ));
+        $newDate = $user->getBirthdate('F d Y', null, array('strtolower'));
+        dump($newDate);
+
+    }
 }
