@@ -194,10 +194,10 @@ class Base
         // otherwise, we need to init a new one
         $options = getDbConfig('database.' . $name);
         if (empty($options)) {
-            throw new Dao("Database configuration not set for {$name}, please use" . PHO_EOL .
-                          "setDbConfig(array(" . PHO_EOL .
-                          "    'db name' => (array) options" . PHO_EOL .
-                          "));" . PHO_EOL .
+            throw new Dao("Database configuration not set for {$name}, please use" . PHP_EOL .
+                          "setDbConfig(array(" . PHP_EOL .
+                          "    'db name' => (array) options" . PHP_EOL .
+                          "));" . PHP_EOL .
                           "to set it up");
         }
         // next, build up the adaptor
