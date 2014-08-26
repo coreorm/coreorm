@@ -2,7 +2,7 @@ CoreORM/Framework
 =================
 
 PHP Object Relational Mapping package with DAO and managed thin models, supports read/write, multiple adaptors and more.
-'''NOTE''' currently only supports MySQL with fully ORM support, but dao can still be used on sqlite.
+Fully compatible with MySQL and SQLite, in the future I will try to expand support to more RDBS.
 
 ### How to include this package in your project
 Simple add the following into your composer.json
