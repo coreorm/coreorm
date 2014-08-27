@@ -129,7 +129,8 @@ to generate model, make sure you put a config.php file somewhere, see example be
         )
     );
 ```
-copy vendor/coreorm/framework/modeller to your project root (same level as vendor directory) as it requires autoload.php
+copy
+```vendor/coreorm/framework/modeller``` to your project root (same level as vendor directory) as it requires autoload.php
 from under the vendor/ directory (or, alternatively, if you would like to keep it somewhere else, just open it and ensure
 the autoload.php path is correct.
 
