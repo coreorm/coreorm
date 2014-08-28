@@ -1,8 +1,26 @@
 CoreORM/Framework
 =================
 
-PHP Object Relational Mapping package with DAO and managed thin models, supports read/write, multiple adaptors and more.
-Fully compatible with MySQL and SQLite, in the future I will try to expand support to more RDBS.
+### What is this thing?
+
+Writing data layer is boring, trying to remember all the table names and all the fields in the table is impossible, writing SQL queries is painful and it's so easy to make mistakes!
+
+I'm sure we've all been through this and we probably trying to avoid this as much as we can, yeah I know there a loads of active-record type ORM layers out there for php to use, but really can you remember all the fields? ```$user->find('user_id=123')``` really?!! And ```echo $user->name``` serious? I have to remember all the fields?
+
+Nope, no, definitely not. So here I am introducing the simplified, light-weight and easy to use (well, code-autocompletion anyone?) ORM framework that totally does not suck.
+
+### features
+1. Thin models that can be used across different types of data source (MySQL/SQlite, will expand to cover more later)
+2. DAO (Data Access Objects) that manages the thin models instead of models carrying the connections.
+3. Out-of-the-box slave database support for large enterprise level data managements, supported by super simple APIs ```$dao->readModel(\CoreORM\Model $model, $useSlave = true)```
+4. Table relations in database mapped as object relations! ```$passwordHash = $user->relationGetLogin()->getPassword();```
+5. Zero SQL necessary! DAOs will automagically compose the SQL (and trust me, it's very fast) using the relations and criteria from the models.
+6. Zero code necessary for models! They are actually generated based on a very simple configuration file (more details see the sections below).
+7. Awesome performance - since the models are generated with all table/field information stored within the model, there's no need to describe table to generate queries or whatnot.
+8. Extensibility - all models are crafted following proper OOD patterns, it's super easy to extend any model to add functionalities (having said that, you really don't need to do this at 90% of the time).
+9. Less code, more accuracy (or actually it's 100% accuracy there). Since all tables are presented by models that contain proper getters and setters, you really don't need to remember the field name/table name at all, just type ```$model->get``` and your IDE should just give you a list of options to pick from.
+10. You really want to write your own queries still? That's fine too, add your own DAO extending the base DAO, and you are set!
+
 
 ### How to include this package in your project
 Simple add the following into your composer.json
