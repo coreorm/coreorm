@@ -34,10 +34,32 @@
           <h1>
 <a name="coreormframework" class="anchor" href="#coreormframework"><span class="octicon octicon-link"></span></a>CoreORM/Framework</h1>
 
-<p>PHP Object Relational Mapping package with DAO and managed thin models, supports read/write, multiple adaptors and more.
-Fully compatible with MySQL and SQLite, in the future I will try to expand support to more RDBS.</p>
+<h3>
+<a name="what-is-this-thing" class="anchor" href="#what-is-this-thing"><span class="octicon octicon-link"></span></a>What is this thing?</h3>
+
+<p>Writing data layer is boring, trying to remember all the table names and all the fields in the table is impossible, writing SQL queries is painful and it's so easy to make mistakes!</p>
+
+<p>I'm sure we've all been through this and we probably trying to avoid this as much as we can, yeah I know there a loads of active-record type ORM layers out there for php to use, but really can you remember all the fields? <code>$user-&gt;find('user_id=123')</code> really?!! And <code>echo $user-&gt;name</code> serious? I have to remember all the fields?</p>
+
+<p>Nope, no, definitely not. So here I am introducing the simplified, light-weight and easy to use (well, code-autocompletion anyone?) ORM framework that totally does not suck.</p>
 
 <h3>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>features</h3>
+
+<ol>
+<li>Thin models that can be used across different types of data source (MySQL/SQlite, will expand to cover more later)</li>
+<li>DAO (Data Access Objects) that manages the thin models instead of models carrying the connections.</li>
+<li>Out-of-the-box slave database support for large enterprise level data managements, supported by super simple APIs <code>$dao-&gt;readModel(\CoreORM\Model $model, $useSlave = true)</code>
+</li>
+<li>Table relations in database mapped as object relations! <code>$passwordHash = $user-&gt;relationGetLogin()-&gt;getPassword();</code>
+</li>
+<li>Zero SQL necessary! DAOs will automagically compose the SQL (and trust me, it's very fast) using the relations and criteria from the models.</li>
+<li>Zero code necessary for models! They are actually generated based on a very simple configuration file (more details see the sections below).</li>
+<li>Awesome performance - since the models are generated with all table/field information stored within the model, there's no need to describe table to generate queries or whatnot.</li>
+<li>Extensibility - all models are crafted following proper OOD patterns, it's super easy to extend any model to add functionalities (having said that, you really don't need to do this at 90% of the time).</li>
+<li>Less code, more accuracy (or actually it's 100% accuracy there). Since all tables are presented by models that contain proper getters and setters, you really don't need to remember the field name/table name at all, just type <code>$model-&gt;get</code> and your IDE should just give you a list of options to pick from.</li>
+<li>You really want to write your own queries still? That's fine too, add your own DAO extending the base DAO, and you are set!</li>
+</ol><h3>
 <a name="how-to-include-this-package-in-your-project" class="anchor" href="#how-to-include-this-package-in-your-project"><span class="octicon octicon-link"></span></a>How to include this package in your project</h3>
 
 <p>Simple add the following into your composer.json</p>
