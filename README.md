@@ -53,7 +53,7 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
 ### setup the config this way (runtime).
 
 ```
-    setDbConfig('default', [default db adaptor name]);  // we need a default always
+    setDbConfig('default_database', [default db adaptor name]);  // we need a default always
     // next, set up the database adaptors in this way:
     setDbConfig('database', array(
         [adaptor name] => (array) [$options]
