@@ -6,6 +6,8 @@
  */
 namespace CoreORM
 {
+    use CoreORM\Integration\Laravel;
+
     /**
      * Class Core
      * @package CoreORM
@@ -74,6 +76,22 @@ namespace CoreORM
 
         }// end retrieve
 
+
+        /**
+         * one line integration with laravel
+         * fully automated integration tool
+         * @param bool $debug
+         * if debug is enabled, it will report uncompatible
+         * database adaptors
+         */
+        public static function integrateWithLaravel($debug = false)
+        {
+            $integration = new Laravel();
+            if ($debug) {
+                $integration->reportErrors();
+            }
+        }
+
     }// end Core
 
 }
@@ -119,6 +137,15 @@ namespace
     function setDbConfig($key, $val = null)
     {
         Config::set($key, $val);
+    }
+
+    /**
+     * set default db
+     * @param $key
+     */
+    function setDefaultDb($key)
+    {
+        Config::set('default_database', $key);
     }
 
     /**
