@@ -7,6 +7,7 @@
 namespace CoreORM
 {
     use CoreORM\Integration\Laravel;
+    use CoreORM\Integration\Slim;
 
     /**
      * Class Core
@@ -90,6 +91,25 @@ namespace CoreORM
             if ($debug) {
                 $integration->reportErrors();
             }
+
+        }
+
+        /**
+         * integrate with slim
+         * @param \Slim\Slim $app
+         * @param bool $debug
+         */
+        public static function integrateWithSlim(\Slim\Slim $app, $debug = false)
+        {
+            $opts = array(
+                'coreorm' => $app->config('coreorm'),
+                'debug' => $app->config('debug'),
+            );
+            $integration = new Slim($opts);
+            if ($debug) {
+                $integration->reportErrors();
+            }
+
         }
 
     }// end Core

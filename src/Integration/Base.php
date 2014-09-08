@@ -19,10 +19,19 @@ class Base
     protected $errors = array();
 
     /**
-     * the constructor
+     * options, can be useful later
+     * @var array
      */
-    public function __construct()
+    protected $options = array();
+
+
+    /**
+     * the constructor
+     * @param array $options
+     */
+    public function __construct($options = array())
     {
+        $this->options = $options;
         // 1st, translate config
         $config = $this->translateConfig();
         Config::setArray($config);
