@@ -21,6 +21,42 @@ Nope, no, definitely not. So here I am introducing the simplified, light-weight 
 9. Less code, more accuracy (or actually it's 100% accuracy there). Since all tables are presented by models that contain proper getters and setters, you really don't need to remember the field name/table name at all, just type ```$model->get``` and your IDE should just give you a list of options to pick from.
 10. You really want to write your own queries still? That's fine too, add your own DAO extending the base DAO, and you are set!
 
+### compatibility
+The current version of CoreORM supports the following 2 database systems
+* MySQL
+* SQLite
+Future versions will add PostgreSQL and MS SQL server, etc.
+
+The current version also ships with out of the box Laravel & Slim framework compatibility.
+
+For Laravel, since it contains db config already, simply add the following line in your ```boostrap/start.php```, right before the final line ```return $app```, add the following line:
+```
+\CoreORM\Core::integrateWithLaravel();
+```
+That's it!
+
+For Slim framework, since database config is not part of the framework, you will have to add the database config in the following format before calling your Slim app:
+```
+$config = array(
+    'coreorm' => array(
+        'default_database' => 'example',
+        'database' => array(
+          'example' => array(
+              'dbname' => 'coreorm_examples',
+              'adaptor' => \CoreORM\Adaptor\Pdo::ADAPTOR_MYSQL,
+              'user' => 'coreorm',
+              'pass' => 'example',
+              'host' => '127.0.0.1'
+          )
+        )
+);
+$app = new Slim($config);
+```
+Then right after that, ad the following line:
+```
+\CoreORM\Core::integrateWithSlim($app);
+```
+And you are set!
 
 ### How to include this package in your project
 Simple add the following into your composer.json
@@ -194,7 +230,6 @@ $model = new User();
 $model->setId(123);
 $Orm->deleteModel($model);
 ```
-
 
 ### Examples:
 
