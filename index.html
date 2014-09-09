@@ -60,6 +60,49 @@
 <li>Less code, more accuracy (or actually it's 100% accuracy there). Since all tables are presented by models that contain proper getters and setters, you really don't need to remember the field name/table name at all, just type <code>$model-&gt;get</code> and your IDE should just give you a list of options to pick from.</li>
 <li>You really want to write your own queries still? That's fine too, add your own DAO extending the base DAO, and you are set!</li>
 </ol><h3>
+<a name="compatibility" class="anchor" href="#compatibility"><span class="octicon octicon-link"></span></a>compatibility</h3>
+
+<p>The current version of CoreORM supports the following 2 database systems</p>
+
+<ul>
+<li>MySQL</li>
+<li>SQLite
+Future versions will add PostgreSQL and MS SQL server, etc.</li>
+</ul><p>The current version also ships with out of the box Laravel &amp; Slim framework compatibility.</p>
+
+<p>For Laravel, since it contains db config already, simply add the following line in your <code>boostrap/start.php</code>, right before the final line <code>return $app</code>, add the following line:</p>
+
+<pre><code>\CoreORM\Core::integrateWithLaravel();
+</code></pre>
+
+<p>That's it!</p>
+
+<p>For Slim framework, since database config is not part of the framework, you will have to add the database config in the following format before calling your Slim app:</p>
+
+<pre><code>$config = array(
+    'coreorm' =&gt; array(
+        'default_database' =&gt; 'example',
+        'database' =&gt; array(
+          'example' =&gt; array(
+              'dbname' =&gt; 'coreorm_examples',
+              'adaptor' =&gt; \CoreORM\Adaptor\Pdo::ADAPTOR_MYSQL,
+              'user' =&gt; 'coreorm',
+              'pass' =&gt; 'example',
+              'host' =&gt; '127.0.0.1'
+          )
+        )
+);
+$app = new Slim($config);
+</code></pre>
+
+<p>Then right after that, ad the following line:</p>
+
+<pre><code>\CoreORM\Core::integrateWithSlim($app);
+</code></pre>
+
+<p>And you are set!</p>
+
+<h3>
 <a name="how-to-include-this-package-in-your-project" class="anchor" href="#how-to-include-this-package-in-your-project"><span class="octicon octicon-link"></span></a>How to include this package in your project</h3>
 
 <p>Simple add the following into your composer.json</p>
@@ -112,6 +155,8 @@
 <a name="setup-the-config-this-way-runtime" class="anchor" href="#setup-the-config-this-way-runtime"><span class="octicon octicon-link"></span></a>setup the config this way (runtime).</h3>
 
 <pre><code>    setDbConfig('default_database', [default db adaptor name]);  // we need a default always
+    // or, alternatively, use
+    setDefaultDb([default db adaptor name]);
     // next, set up the database adaptors in this way:
     setDbConfig('database', array(
         [adaptor name] =&gt; (array) [$options]
