@@ -229,7 +229,7 @@ class Debug
         if ($class instanceof Pdo || $class instanceof Dynamodb) {
             return self::$DATA[self::PROFILER][] = array(
                 'CLASS'  => $classStr,
-                'SQL' => $params[0],
+                'SQL' => var_export($params[0], 1),
                 'BIND' => !empty($params[1]) ? $params[1] : null,
                 'DURATION' => $duration,
                 'MEM' => $mem

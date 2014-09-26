@@ -20,8 +20,8 @@ class Combination extends Model
             'field' => 'id_1',
             'field_key' => 'combined_key_table_id_1',
             'field_map' => '`combined_key_table`.`id_1`',
-            'getter' => 'setId1',
-            'setter' => 'getId1',
+            'getter' => 'getId1',
+            'setter' => 'setId1',
         ),
         'combined_key_table_id_2' => array(
             'type' => 'int',
@@ -29,8 +29,8 @@ class Combination extends Model
             'field' => 'id_2',
             'field_key' => 'combined_key_table_id_2',
             'field_map' => '`combined_key_table`.`id_2`',
-            'getter' => 'setId2',
-            'setter' => 'getId2',
+            'getter' => 'getId2',
+            'setter' => 'setId2',
         ),
         'combined_key_table_name' => array(
             'type' => 'string',
@@ -38,8 +38,8 @@ class Combination extends Model
             'field' => 'name',
             'field_key' => 'combined_key_table_name',
             'field_map' => '`combined_key_table`.`name`',
-            'getter' => 'setName',
-            'setter' => 'getName',
+            'getter' => 'getName',
+            'setter' => 'setName',
         ),
         'combined_key_table_user_id' => array(
             'type' => 'int',
@@ -47,8 +47,8 @@ class Combination extends Model
             'field' => 'user_id',
             'field_key' => 'combined_key_table_user_id',
             'field_map' => '`combined_key_table`.`user_id`',
-            'getter' => 'setUserId',
-            'setter' => 'getUserId',
+            'getter' => 'getUserId',
+            'setter' => 'setUserId',
         ),
     );
     protected $key = array('combined_key_table_id_1', 'combined_key_table_id_2');

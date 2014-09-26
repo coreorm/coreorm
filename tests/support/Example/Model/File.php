@@ -20,8 +20,8 @@ class File extends Model
             'field' => 'id',
             'field_key' => 'attachment_id',
             'field_map' => '`attachment`.`id`',
-            'getter' => 'setId',
-            'setter' => 'getId',
+            'getter' => 'getId',
+            'setter' => 'setId',
         ),
         'attachment_user_id' => array(
             'type' => 'int',
@@ -29,8 +29,8 @@ class File extends Model
             'field' => 'user_id',
             'field_key' => 'attachment_user_id',
             'field_map' => '`attachment`.`user_id`',
-            'getter' => 'setUserId',
-            'setter' => 'getUserId',
+            'getter' => 'getUserId',
+            'setter' => 'setUserId',
         ),
         'attachment_filename' => array(
             'type' => 'string',
@@ -38,8 +38,8 @@ class File extends Model
             'field' => 'filename',
             'field_key' => 'attachment_filename',
             'field_map' => '`attachment`.`filename`',
-            'getter' => 'setFilename',
-            'setter' => 'getFilename',
+            'getter' => 'getFilename',
+            'setter' => 'setFilename',
         ),
         'attachment_size' => array(
             'type' => 'float',
@@ -47,8 +47,8 @@ class File extends Model
             'field' => 'size',
             'field_key' => 'attachment_size',
             'field_map' => '`attachment`.`size`',
-            'getter' => 'setSize',
-            'setter' => 'getSize',
+            'getter' => 'getSize',
+            'setter' => 'setSize',
         ),
     );
     protected $key = array('attachment_id');

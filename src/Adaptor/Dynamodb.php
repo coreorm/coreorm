@@ -54,6 +54,34 @@ class Dynamodb extends Orm
 
 
     /**
+     * direct query
+     * @param string $options
+     * @param string $type
+     * @return \Guzzle\Service\Resource\Model|\PDOStatement
+     */
+    public function queryRaw($options, $type = 'query')
+    {
+        return $this->client->$type($options);
+
+    }
+
+    /**
+     * query by type, using debug tool to benchmark
+     * @param string $options
+     * @param string $type
+     * @return \PDOStatement|void
+     */
+    public function query($options, $type = 'query')
+    {
+        if (Debug::debug()) {
+            return Debug::bench('queryRaw', array($options, $type), $this);
+        }
+        return $this->queryRaw($options, $type);
+
+    }
+
+
+    /**
      * query one model item
      * @param Model $item
      * @param array $extraCondition
@@ -62,7 +90,7 @@ class Dynamodb extends Orm
     public function queryItem(Model $item, $extraCondition = array())
     {
         $condition = $item->queryGetCondition($extraCondition);
-        return $this->client->query($condition);
+        return $this->query($condition, 'query');
 
     }
 
@@ -76,7 +104,7 @@ class Dynamodb extends Orm
     public function scanItems(Model $item, $extraCondition = array())
     {
         $condition = $item->queryGetCondition($extraCondition);
-        return $this->client->scan($condition);
+        return $this->query($condition, 'scan');
 
     }
 
@@ -89,7 +117,7 @@ class Dynamodb extends Orm
     public function putItem(Model $item)
     {
         $data = $this->composeData($item);
-        return $this->client->putItem($data);
+        return $this->query($data, 'putItem');
 
     }
 
@@ -103,8 +131,7 @@ class Dynamodb extends Orm
     public function deleteItem(Model $item, $extraCondition = array())
     {
         $data = $item->queryGetCondition($extraCondition, Model::DELETE);
-        dump($data);
-        return $this->client->deleteItem($data);
+        return $this->query($data, 'deleteItem');
 
     }
 
@@ -137,7 +164,7 @@ class Dynamodb extends Orm
     {
         try {
             $param = array('TableName' => $table);
-            $item = $this->client->describeTable($param);
+            $item = $this->query($param, 'describeTable');
             if (empty($item)) {
                 return array();
             }
@@ -170,7 +197,7 @@ class Dynamodb extends Orm
      */
     public function dropTable($table)
     {
-        return $this->client->deleteTable(array('Table' => $table));
+        return $item = $this->query(array('Table' => $table), 'deleteTable');
 
     }
 
@@ -205,7 +232,7 @@ class Dynamodb extends Orm
      */
     public function createTable($schema, $waitTillFinish = false)
     {
-        $success = $this->client->createTable($schema);
+        $success = $this->query($schema, 'createTable');
         if ($waitTillFinish) {
             $this->client->waitUntil('TableExists', array(
                 'TableName' => Assoc::get($schema, 'TableName')

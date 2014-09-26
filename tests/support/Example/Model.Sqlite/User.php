@@ -20,8 +20,8 @@ class User extends Model
             'field' => 'id',
             'field_key' => 'user_id',
             'field_map' => '`user`.`id`',
-            'getter' => 'setId',
-            'setter' => 'getId',
+            'getter' => 'getId',
+            'setter' => 'setId',
         ),
         'user_name' => array(
             'type' => 'string',
@@ -29,8 +29,8 @@ class User extends Model
             'field' => 'name',
             'field_key' => 'user_name',
             'field_map' => '`user`.`name`',
-            'getter' => 'setName',
-            'setter' => 'getName',
+            'getter' => 'getName',
+            'setter' => 'setName',
         ),
         'user_address' => array(
             'type' => 'string',
@@ -38,8 +38,8 @@ class User extends Model
             'field' => 'address',
             'field_key' => 'user_address',
             'field_map' => '`user`.`address`',
-            'getter' => 'setAddress',
-            'setter' => 'getAddress',
+            'getter' => 'getAddress',
+            'setter' => 'setAddress',
         ),
         'user_birthdate' => array(
             'type' => 'datetime',
@@ -47,8 +47,8 @@ class User extends Model
             'field' => 'birthdate',
             'field_key' => 'user_birthdate',
             'field_map' => '`user`.`birthdate`',
-            'getter' => 'setBirthdate',
-            'setter' => 'getBirthdate',
+            'getter' => 'getBirthdate',
+            'setter' => 'setBirthdate',
         ),
     );
     protected $key = array('user_id');

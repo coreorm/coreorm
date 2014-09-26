@@ -166,8 +166,8 @@ class ModelGenerator
                 'field' => $fName,
                 'field_key' => $fKey,
                 'field_map' => $fKeyMap,
-                'getter' => "set{$camelName}",
-                'setter' => "get{$camelName}",
+                'getter' => "get{$camelName}",
+                'setter' => "set{$camelName}",
             );
             // build sql fields here:
             $constant = strtoupper('FIELD_' . $fName);

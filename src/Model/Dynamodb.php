@@ -1,5 +1,6 @@
 <?php
 namespace CoreORM\Model;
+use Aws\DynamoDb\Enum\Type;
 use CoreORM\Model, CoreORM\Utility\Assoc;
 
 /**
@@ -26,15 +27,15 @@ class Dynamodb extends Model
      * @return $this
      * @throws \CoreORM\Exception\Model
      */
-    public function setJsonData($field, $item, $value)
+    public function rawSetJsonData($field, $item, $value)
     {
         // must be valid in the fields definition
-        if (isset($this->fields[$field][$item])) {
+        if (isset($this->fields[$field])) {
             // find the data (and it should be json array)
             $data = Assoc::get($this->data, $field);
-            $dataArray =  array();
+            $dataArray = array();
             if (!empty($data)) {
-                $dataArray = json_encode($data, true);
+                $dataArray = json_decode($data, true);
             }
             $dataArray[$item] = $value;
             $this->rawSetFieldData($field, json_encode($dataArray));
@@ -57,7 +58,19 @@ class Dynamodb extends Model
             $opts['KeyConditions'] = $this->condition;
         }
         if ($type == self::DELETE) {
-            $opts['Key'] = $this->condition;
+            $opts['Key'] = array();
+            // retrieve from all data inside the array
+            foreach ($this->key() as $field) {
+                $type = Assoc::get($this->fields, $field . '.type');
+                if ($type == 'string' || $type == 'str') {
+                    $type = Type::STRING;
+                } else {
+                    $type = Type::NUMBER;
+                }
+                $opts['Key'][$field] = array(
+                    $type => $this->rawGetFieldData($field)
+                );
+            }
         }
         return $opts;
 
@@ -79,20 +92,6 @@ class Dynamodb extends Model
                 array($type => $value)
             )
         );
-        return $this;
-
-    }
-
-    /**
-     * set query condition for delete
-     * @param $field
-     * @param $type
-     * @param $value
-     * @return $this
-     */
-    public function querySetDeleteCondition($field, $type, $value)
-    {
-        $this->condition[$field] = array($type => $value);
         return $this;
 
     }

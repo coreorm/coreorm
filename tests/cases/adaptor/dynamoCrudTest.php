@@ -4,7 +4,9 @@
  *
  */
 require_once __DIR__ . '/../header.php';
-use CoreORM\Adaptor\Dynamodb, CoreORM\Utility\Debug;
+require_once __DIR__ . '/../../support/Example/Model.Dynamo/Mock.php';
+use CoreORM\Adaptor\Dynamodb, CoreORM\Utility\Debug, \Example\Model\Mock,
+    \Aws\DynamoDb\Enum\ComparisonOperator, Aws\DynamoDb\Enum\Type;
 /**
  * test core
  */
@@ -73,58 +75,52 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
 
     public function testInsert()
     {
-        $item = new TestSampleItem();
+        $item = new Mock();
         $item->rawSetFieldData('notification_id', 'notification id here')
-             ->rawSetFieldData('sns_message_id', 'message id here')
-             ->rawSetFieldData('job_assignment_id', 12345678);
-        $this->adaptor->putItem($item);
+             ->rawSetFieldData('sns_message_id', 'test message id')
+             ->rawSetFieldData('job_assignment_id', 12345678)
+             ->rawSetJsonData('data', 'test', 123);
+        $result = $this->adaptor->putItem($item);
+        $this->assertNotEmpty($result->get('ConsumedCapacity'));
 
-
+        $item->rawSetFieldData('notification_id', 'notification id 2')
+            ->rawSetFieldData('sns_message_id', 'test xxxx id')
+            ->rawSetFieldData('job_assignment_id', 1111)
+            ->rawSetJsonData('data', 'test', 22)
+            ->rawSetJsonData('data', 'something', 'asdfas');
+        $result = $this->adaptor->putItem($item);
+        $this->assertNotEmpty($result->get('ConsumedCapacity'));
     }
 
     public function testQuery()
     {
-        $item = new TestSampleItem();
+        $item = new Mock();
         $item->querySetCondition('notification_id', 'EQ', 'S', 'notification id here');
         $result = $this->adaptor->queryItem($item);
-        dump($result->get('Item'));
-        Debug::output(0);
+        $this->assertEquals(count($result->get('Items')), 1);
     }
 
     public function testScan()
     {
-
+        $item = new Mock();
+        $item->querySetCondition('notification_id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
+        $result = $this->adaptor->scanItems($item);
+        $this->assertEquals(count($result->get('Items')), 2);
     }
 
     public function testDelete()
     {
-        $item = new TestSampleItem();
-        $item->querySetDeleteCondition('notification_id', \Aws\DynamoDb\Enum\Type::S, 'notification id here');
-        $result = $this->adaptor->deleteItem($item);
-        dump($result);
+        $item = new Mock();
+        $item->rawSetFieldData('notification_id', 'notification id here');
+        $this->adaptor->deleteItem($item);
+        $item->rawSetFieldData('notification_id', 'notification id 2');
+        $this->adaptor->deleteItem($item);
+        $item = new Mock();
+        $item->querySetCondition('notification_id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
+        $result = $this->adaptor->scanItems($item);
+        $this->assertEquals(count($result->get('Items')), 0);
+        Debug::output();
 
     }
 
-}
-
-class TestSampleItem extends \CoreORM\Model\Dynamodb
-{
-    protected $table = 'hip-pushwatcher-notification-deliverability2014-09-26Test';
-    protected $fields = array(
-        'notification_id' => array(
-            'type' => 'string',
-            'field_map' => 'notification_id',
-            'field' => 'notification_id'
-        ),
-        'sns_message_id' => array(
-            'type' => 'string',
-            'field_map' => 'sns_message_id',
-            'field' => 'sns_message_id'
-        ),
-        'job_assignment_id' => array(
-            'type' => 'int',
-            'field_map' => 'job_assignment_id',
-            'field' => 'job_assignment_id'
-        ),
-    );
 }

@@ -19,8 +19,8 @@ class Login extends Model
             'field' => 'user_id',
             'field_key' => 'login_user_id',
             'field_map' => '`login`.`user_id`',
-            'getter' => 'setUserId',
-            'setter' => 'getUserId',
+            'getter' => 'getUserId',
+            'setter' => 'setUserId',
         ),
         'login_username' => array(
             'type' => 'string',
@@ -28,8 +28,8 @@ class Login extends Model
             'field' => 'username',
             'field_key' => 'login_username',
             'field_map' => '`login`.`username`',
-            'getter' => 'setUsername',
-            'setter' => 'getUsername',
+            'getter' => 'getUsername',
+            'setter' => 'setUsername',
         ),
         'login_password' => array(
             'type' => 'string',
@@ -37,8 +37,8 @@ class Login extends Model
             'field' => 'password',
             'field_key' => 'login_password',
             'field_map' => '`login`.`password`',
-            'getter' => 'setPassword',
-            'setter' => 'getPassword',
+            'getter' => 'getPassword',
+            'setter' => 'setPassword',
         ),
     );
     protected $key = array('login_user_id');
