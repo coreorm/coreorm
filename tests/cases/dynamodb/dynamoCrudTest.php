@@ -13,7 +13,7 @@ use CoreORM\Adaptor\Dynamodb, CoreORM\Utility\Debug, \Example\Model\Mock,
 class TestCrudDynamo extends PHPUnit_Framework_TestCase
 {
     protected $opts = array(
-        'profile' => 'bruceli',
+        'profile' => 'coreorm-test',
         'region' => 'ap-southeast-2',
     );
 

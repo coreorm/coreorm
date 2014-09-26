@@ -27,12 +27,12 @@ class TestPdoDynamodb extends PHPUnit_Framework_TestCase
     public function testBaseAdaptor()
     {
         new Dynamodb(array(
-            'profile' => 'bruceli',
+            'profile' => 'coreorm-test',
             'region' => 'ap-southeast-2',
         ));
 
         new Dynamodb(array(
-            'profile' => 'bruceli',
+            'profile' => 'coreorm-test',
             'region' => 'ap-southeast-2',
         ));
         // and both should be using the same PDO...
@@ -41,7 +41,7 @@ class TestPdoDynamodb extends PHPUnit_Framework_TestCase
         $this->assertEquals(count($pdos), 1);
         // now add yet a new one with different config
         new Dynamodb(array(
-            'profile' => 'bruceli2',
+            'profile' => 'coreorm-test2',
             'region' => 'ap-southeast-2',
         ));
         $pdos = Pdo::getPdoAdaptor();
