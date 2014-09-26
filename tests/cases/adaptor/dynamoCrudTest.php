@@ -56,15 +56,20 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->adaptor = new Dynamodb($this->opts);
-        $this->adaptor->createTableIfNotExists($this->schema, true);
     }
 
     public function tearDown()
     {
         parent::tearDown();
-//        $this->adaptor->dropTable(self::table);
         unset($this->adaptor);
     }
+
+    public function testCreateTable()
+    {
+        $this->adaptor->createTableIfNotExists($this->schema, true);
+        $this->assertTrue($this->adaptor->tableExists(self::table));
+    }
+
 
     public function testDescribe()
     {
@@ -119,6 +124,12 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
         $item->querySetCondition('notification_id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
         $result = $this->adaptor->scanItems($item);
         $this->assertEquals(count($result->get('Items')), 0);
+
+    }
+
+    public function testDropTable()
+    {
+        $this->adaptor->dropTable(self::table);
         Debug::output();
 
     }

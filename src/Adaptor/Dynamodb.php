@@ -197,7 +197,7 @@ class Dynamodb extends Orm
      */
     public function dropTable($table)
     {
-        return $item = $this->query(array('Table' => $table), 'deleteTable');
+        return $item = $this->query(array('TableName' => $table), 'deleteTable');
 
     }
 
