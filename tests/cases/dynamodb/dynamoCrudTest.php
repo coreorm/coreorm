@@ -17,7 +17,7 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
         'region' => 'ap-southeast-2',
     );
 
-    const table = 'hip-pushwatcher-notification-deliverability2014-09-26Test';
+    const table = 'test-user-data';
 
     /**
      * @var Dynamodb
@@ -27,30 +27,16 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
     protected $schema = array(
         'TableName' => self::table,
         'AttributeDefinitions' => [
-            array('AttributeName' => 'notification_id',     'AttributeType' => 'S')
+            array('AttributeName' => 'id',     'AttributeType' => 'S')
         ],
         'KeySchema' => [
-            array('AttributeName' => 'notification_id',     'KeyType' => 'HASH'),
+            array('AttributeName' => 'id',     'KeyType' => 'HASH'),
         ],
         'ProvisionedThroughput' => array(
             'ReadCapacityUnits'  => 10,
             'WriteCapacityUnits' => 10
         )
     );
-    /*
-     then we push more to it later...
-
-    array('AttributeName' => 'sns_message_id',      'AttributeType' => 'S'),
-    array('AttributeName' => 'job_assignment_id',   'AttributeType' => 'N'),
-    array('AttributeName' => 'token',               'AttributeType' => 'S'),
-    array('AttributeName' => 'os',                  'AttributeType' => 'S'),
-    array('AttributeName' => 'data',                'AttributeType' => 'S'),
-    array('AttributeName' => 'created_at',          'AttributeType' => 'N'),
-    array('AttributeName' => 'sent_to_sns_at',      'AttributeType' => 'N'),
-    array('AttributeName' => 'arrive_at_device_at', 'AttributeType' => 'N'),
-     */
-
-    const DATA = 'some test data to be inserted';
 
     public function setUp()
     {
@@ -81,26 +67,41 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
     public function testInsert()
     {
         $item = new Mock();
-        $item->rawSetFieldData('notification_id', 'notification id here')
-             ->rawSetFieldData('sns_message_id', 'test message id')
-             ->rawSetFieldData('job_assignment_id', 12345678)
-             ->rawSetJsonData('data', 'test', 123);
+        $item->rawSetFieldData('id', 'id12345')
+             ->rawSetFieldData('foo', 'some test')
+             ->rawSetFieldData('bar', 12345678)
+             ->rawSetJsonData('data', 'foo', 123);
         $result = $this->adaptor->putItem($item);
         $this->assertNotEmpty($result->get('ConsumedCapacity'));
 
-        $item->rawSetFieldData('notification_id', 'notification id 2')
-            ->rawSetFieldData('sns_message_id', 'test xxxx id')
-            ->rawSetFieldData('job_assignment_id', 1111)
-            ->rawSetJsonData('data', 'test', 22)
+
+        $item->rawSetFieldData('id', 'id12345-2')
+            ->rawSetFieldData('foo', 'some test')
+            ->rawSetFieldData('bar', 12345678)
+            ->rawSetJsonData('data', 'foo', 22)
             ->rawSetJsonData('data', 'something', 'asdfas');
         $result = $this->adaptor->putItem($item);
         $this->assertNotEmpty($result->get('ConsumedCapacity'));
     }
 
+    public function testUpdate()
+    {
+        $item = new Mock();
+        $item->rawSetFieldData('id', 'id12345')
+             ->rawSetFieldData('time', 'a totally new attribute!');
+        $this->adaptor->updateItem($item);
+        // then retrieve
+        $item->querySetCondition('id', 'EQ', 'S', 'id12345');
+        $result = $this->adaptor->queryItem($item);
+        $data = current($result->get('Items'));
+        $this->assertEquals(current($data['time']), $item->rawGetFieldData('time'));
+
+    }
+
     public function testQuery()
     {
         $item = new Mock();
-        $item->querySetCondition('notification_id', 'EQ', 'S', 'notification id here');
+        $item->querySetCondition('id', 'EQ', 'S', 'id12345');
         $result = $this->adaptor->queryItem($item);
         $this->assertEquals(count($result->get('Items')), 1);
     }
@@ -108,7 +109,7 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
     public function testScan()
     {
         $item = new Mock();
-        $item->querySetCondition('notification_id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
+        $item->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
         $result = $this->adaptor->scanItems($item);
         $this->assertEquals(count($result->get('Items')), 2);
     }
@@ -116,12 +117,12 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
     public function testDelete()
     {
         $item = new Mock();
-        $item->rawSetFieldData('notification_id', 'notification id here');
+        $item->rawSetFieldData('id', 'id12345');
         $this->adaptor->deleteItem($item);
-        $item->rawSetFieldData('notification_id', 'notification id 2');
+        $item->rawSetFieldData('id', 'id12345-2');
         $this->adaptor->deleteItem($item);
         $item = new Mock();
-        $item->querySetCondition('notification_id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
+        $item->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, 'id1234');
         $result = $this->adaptor->scanItems($item);
         $this->assertEquals(count($result->get('Items')), 0);
 

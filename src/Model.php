@@ -186,7 +186,7 @@ class Model
      * @param array $filter filter over the content
      * @return float|int|mixed|null
      */
-    protected function rawGetFieldData($name, $default = null, $filter = array())
+    public function rawGetFieldData($name, $default = null, $filter = array())
     {
         // must be verified
         if (empty($this->fields[$name])) {

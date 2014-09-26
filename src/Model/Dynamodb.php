@@ -1,5 +1,6 @@
 <?php
 namespace CoreORM\Model;
+use Aws\DynamoDb\Enum\AttributeAction;
 use Aws\DynamoDb\Enum\Type;
 use CoreORM\Model, CoreORM\Utility\Assoc;
 
@@ -12,6 +13,7 @@ class Dynamodb extends Model
 {
     const READ = 1;
     const DELETE = 2;
+    const UPDATE = 3;
 
     /**
      * query condition
@@ -47,30 +49,47 @@ class Dynamodb extends Model
 
     /**
      * get condition
-     * @param array $opts extra options
+     * @param array $opts
+     * @param int $type
      * @return array
      */
     public function queryGetCondition($opts = array(), $type = self::READ)
     {
         $opts = (array) $opts;
         $opts['TableName'] = $this->table();
-        if ($type == self::READ) {
-            $opts['KeyConditions'] = $this->condition;
-        }
-        if ($type == self::DELETE) {
-            $opts['Key'] = array();
-            // retrieve from all data inside the array
-            foreach ($this->key() as $field) {
-                $type = Assoc::get($this->fields, $field . '.type');
-                if ($type == 'string' || $type == 'str') {
-                    $type = Type::STRING;
-                } else {
-                    $type = Type::NUMBER;
+        switch ($type) {
+            case self::READ:
+                $opts['KeyConditions'] = $this->condition;
+                break;
+            case self::UPDATE:
+                foreach ($this->data as $field => $value) {
+                    if (!in_array($field, $this->key)) {
+                        $type = Assoc::get($this->fields, $field . '.type');
+                        if ($type == 'int' || $type == 'integer') {
+                            $type = Type::NUMBER;
+                        } else {
+                            $type = Type::STRING;
+                        }
+                        $opts['AttributeUpdates'][$field] = array(
+                            'Value' => array($type => $value)
+                        );
+                    }
                 }
-                $opts['Key'][$field] = array(
-                    $type => $this->rawGetFieldData($field)
-                );
-            }
+            case self::DELETE:
+                $opts['Key'] = array();
+                // retrieve from all data inside the array
+                foreach ($this->key as $field) {
+                    $type = Assoc::get($this->fields, $field . '.type');
+                    if ($type == 'int' || $type == 'integer') {
+                        $type = Type::NUMBER;
+                    } else {
+                        $type = Type::STRING;
+                    }
+                    $opts['Key'][$field] = array(
+                        $type => $this->rawGetFieldData($field)
+                    );
+                }
+                break;
         }
         return $opts;
 

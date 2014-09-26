@@ -12,26 +12,26 @@ use CoreORM\Model\Dynamodb;
  */
 class Mock extends Dynamodb
 {
-    protected $table = 'hip-pushwatcher-notification-deliverability2014-09-26Test';
+    protected $table = 'test-user-data';
     protected $fields = array(
-        'notification_id' => array(
+        'id' => array(
             'type' => 'string',
-            'field' => 'notification_id',
+            'field' => 'id',
             'required' => '1',
-            'field_key' => 'notification_id',
-            'field_map' => 'notification_id',
+            'field_key' => 'id',
+            'field_map' => 'id',
         ),
-        'sns_message_id' => array(
+        'foo' => array(
             'type' => 'string',
-            'field_map' => 'sns_message_id',
-            'field' => 'sns_message_id',
-            'field_key' => 'sns_message_id',
+            'field_map' => 'foo',
+            'field' => 'foo',
+            'field_key' => 'foo',
         ),
-        'job_assignment_id' => array(
+        'bar' => array(
             'type' => 'int',
-            'field_map' => 'job_assignment_id',
-            'field' => 'job_assignment_id',
-            'field_key' => 'job_assignment_id',
+            'field_map' => 'bar',
+            'field' => 'bar',
+            'field_key' => 'bar',
         ),
         'data' => array(
             'type' => 'string',
@@ -39,7 +39,13 @@ class Mock extends Dynamodb
             'field' => 'data',
             'field_key' => 'data',
         ),
+        'time' => array(
+            'type' => 'string',
+            'field_map' => 'time',
+            'field' => 'time',
+            'field_key' => 'time',
+        ),
     );
-    protected $key = array('notification_id');
+    protected $key = array('id');
 
 }

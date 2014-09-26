@@ -1,6 +1,7 @@
 <?php
 namespace CoreORM\Adaptor;
 use Aws\DynamoDb\DynamoDbClient, \CoreORM\Model\Dynamodb AS Model, CoreORM\Utility\Debug;
+use Aws\DynamoDb\Enum\ReturnValue;
 use CoreORM\Exception\Adaptor;
 use PhpParser\Node\Expr\BinaryOp\Mod;
 use CoreORM\Utility\Assoc;
@@ -118,6 +119,21 @@ class Dynamodb extends Orm
     {
         $data = $this->composeData($item);
         return $this->query($data, 'putItem');
+
+    }
+
+
+    /**
+     * update one item
+     * @param Model $item
+     * @param array $newData
+     * @return \PDOStatement|void
+     */
+    public function updateItem(Model $item, $newData = array())
+    {
+        $data = $item->queryGetCondition($newData, Model::UPDATE);
+        $data['ReturnValues'] = ReturnValue::ALL_NEW;
+        return $this->query($data, 'updateItem');
 
     }
 

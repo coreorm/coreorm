@@ -37,7 +37,7 @@ class TestPdoDynamodb extends PHPUnit_Framework_TestCase
         ));
         // and both should be using the same PDO...
         $pdos = Pdo::getPdoAdaptor();
-        dump(array_keys($pdos));
+//        dump(array_keys($pdos));
         $this->assertEquals(count($pdos), 1);
         // now add yet a new one with different config
         new Dynamodb(array(
@@ -46,7 +46,7 @@ class TestPdoDynamodb extends PHPUnit_Framework_TestCase
         ));
         $pdos = Pdo::getPdoAdaptor();
         $this->assertEquals(count($pdos), 2);
-        dump(array_keys($pdos));
+//        dump(array_keys($pdos));
     }
 }
 ?>
