@@ -5,6 +5,7 @@
  */
 
 namespace CoreORM\Utility;
+use CoreORM\Adaptor\Dynamodb;
 use CoreORM\Adaptor\MySQL;
 use CoreORM\Adaptor\Pdo;
 use CoreORM\Core;
@@ -77,7 +78,7 @@ class Debug
             echo PHP_EOL . $src . PHP_EOL . str_repeat('-', strlen($src)) . PHP_EOL;
             foreach ($args as $arg) {
                 echo '(' . gettype($arg) , ') ';
-                var_export($arg);
+                var_dump($arg);
                 // add new line
                 echo PHP_EOL;
             }
@@ -225,7 +226,7 @@ class Debug
         $duration = number_format($time, 4);
         $mem = number_format($mem / (1024 * 1024), 2) . 'M';
         // if class is adaptor, use special one for profiling
-        if ($class instanceof Pdo) {
+        if ($class instanceof Pdo || $class instanceof Dynamodb) {
             return self::$DATA[self::PROFILER][] = array(
                 'CLASS'  => $classStr,
                 'SQL' => $params[0],

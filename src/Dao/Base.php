@@ -7,6 +7,7 @@
  */
 namespace CoreORM\Dao;
 
+use CoreORM\Adaptor\Dynamodb;
 use CoreORM\Adaptor\MySQL;
 use CoreORM\Adaptor\Pdo;
 use CoreORM\Adaptor\Sqlite;
@@ -215,6 +216,8 @@ class Base
             case Pdo::ADAPTOR_SQLITE:
                 $adaptor = new Sqlite($options);
                 break;
+            case Pdo::ADAPTOR_DYNAMODB:
+                $adaptor = new Dynamodb($options);
         }
         if (empty($adaptor)) {
             throw new Dao('Invalid adaptor type: ' . $type);

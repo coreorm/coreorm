@@ -13,6 +13,7 @@ abstract class Pdo
 {
     const ADAPTOR_MYSQL = 'MySQL';
     const ADAPTOR_SQLITE = 'Sqlite';
+    const ADAPTOR_DYNAMODB = 'Dynamodb';
 
     /**
      * pdo connection object
@@ -51,9 +52,9 @@ abstract class Pdo
     /**
      * this sets the adaptor
      * @param $k
-     * @param \PDO $adaptor
+     * @param mixed $adaptor
      */
-    public static function setPdoAdaptor($k, \PDO $adaptor)
+    public static function setPdoAdaptor($k, $adaptor)
     {
         if (empty(self::$pdoAdapters[$k])) {
             self::$pdoAdapters[$k] = $adaptor;
