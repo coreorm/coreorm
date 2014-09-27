@@ -410,6 +410,24 @@ class Base
 
 
     /**
+     * does table exist?
+     * @param $tableName
+     * @return bool
+     */
+    public function tableExists($tableName)
+    {
+        try {
+            $schema = $this->describe($tableName);
+            return !empty($schema);
+
+        } catch (\Exception $e) {
+            return false;
+        }
+
+    }// end tableExists
+
+
+    /**
      * test connection
      */
     public function testConnection()

@@ -128,7 +128,7 @@ class TestSqliteModel extends PHPUnit_Framework_TestCase
         // 2.2 with limit
         $user = new User();
         $user->shouldJoinAll();
-        $users = Debug::bench('readModels', array($user, null, null, null, 1), $this->dao);
+        $users = Debug::bench('readModels', array($user, array('limit' => 1)), $this->dao);
         foreach ($users as $u) {
             $this->assertInstanceOf('\Example\Model\User', $u);
             // next, login must be valid (even if empty)

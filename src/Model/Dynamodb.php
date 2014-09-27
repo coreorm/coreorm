@@ -1,5 +1,6 @@
 <?php
 namespace CoreORM\Model;
+use \Aws\DynamoDb\Enum\ComparisonOperator;
 use Aws\DynamoDb\Enum\AttributeAction;
 use Aws\DynamoDb\Enum\Type;
 use CoreORM\Model, CoreORM\Utility\Assoc;
@@ -59,7 +60,23 @@ class Dynamodb extends Model
         $opts['TableName'] = $this->table();
         switch ($type) {
             case self::READ:
+                if (empty($this->condition)) {
+                    // compose by field
+                    foreach ($this->key as $field) {
+                        $type = Assoc::get($this->fields, $field . '.type');
+                        if ($type == 'int' || $type == 'integer') {
+                            $type = Type::NUMBER;
+                        } else {
+                            $type = Type::STRING;
+                        }
+                        $value = $this->rawGetFieldData($field, false);
+                        if ($value !== false) {
+                            $this->querySetCondition($field, ComparisonOperator::EQ, $type, $value);
+                        }
+                    }
+                }
                 $opts['KeyConditions'] = $this->condition;
+
                 break;
             case self::UPDATE:
                 foreach ($this->data as $field => $value) {

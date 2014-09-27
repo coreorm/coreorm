@@ -90,7 +90,7 @@ class Dynamodb extends Orm
      */
     public function queryItem(Model $item, $extraCondition = array())
     {
-        $condition = $item->queryGetCondition($extraCondition);
+        $condition = $item->queryGetCondition($extraCondition, Model::READ);
         return $this->query($condition, 'query');
 
     }
@@ -104,7 +104,7 @@ class Dynamodb extends Orm
      */
     public function scanItems(Model $item, $extraCondition = array())
     {
-        $condition = $item->queryGetCondition($extraCondition);
+        $condition = $item->queryGetCondition($extraCondition, Model::READ);
         return $this->query($condition, 'scan');
 
     }

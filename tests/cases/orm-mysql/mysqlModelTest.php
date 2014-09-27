@@ -94,7 +94,7 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
         // 2.2 with limit
         $user = new User();
         $user->shouldJoinAll();
-        $users = Debug::bench('readModels', array($user, null, null, null, 1), $this->dao);
+        $users = Debug::bench('readModels', array($user, array('limit' => 1)), $this->dao);
         foreach ($users as $u) {
             $this->assertInstanceOf('\Example\Model\User', $u);
             // next, login must be valid (even if empty)
@@ -179,7 +179,13 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
     public function testReadAdvanced()
     {
         // 1st test order
-        $attachments = $this->dao->readModels(new File(), null, null, array(File::FIELD_SIZE => 'DESC'), 3);
+        $attachments = $this->dao->readModels(
+            new File(),
+            array(
+                'orderBy' => array(File::FIELD_SIZE => 'DESC'),
+                'limit' => 3
+            )
+        );
         $this->assertTrue(count($attachments) == 3);
         $currentFSize = 0;
         foreach ($attachments as $file) {
