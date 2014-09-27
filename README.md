@@ -130,6 +130,24 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
     ));
 ```
 
+###NOTE: for Dynamodb, please follow Amazon's suggestion, have your credentials saved in
+```/home/[your user]/.aws/credentials
+in the following format:
+```
+[my-dynamo-db]
+aws_access_key_id=xxxxx
+aws_secret_access_key=yyyyy
+
+and ensure that your database setting follows the format:
+```
+    setDbConfig('database', array(
+        'main' => array(
+            'profile' => 'my-dynamo-db',
+            'region' => 'my aws region',
+            'adaptor' => CoreORM\Adaptor\Pdo::ADAPTOR_DYNAMODB
+        )
+    ));
+
 ### generating models
 Run the following commands at project root
 
