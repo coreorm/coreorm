@@ -18,6 +18,17 @@ class Dynamodb extends Orm
     const SCAN = 2;
 
     /**
+     * dynamo adaptor
+     * @param string $name
+     * @return Adaptor
+     */
+    public function adaptorDynamo($name = null)
+    {
+        return parent::adaptor($name);
+
+    }
+
+    /**
      * query one model item
      * @param Model $item
      * @param array $extraCondition
@@ -25,13 +36,7 @@ class Dynamodb extends Orm
      */
     public function queryItem(Model $item, $extraCondition = array())
     {
-        $adaptor = $this->adaptor();
-        if ($adaptor instanceof Adaptor) {
-            if (Debug::debug()) {
-                return Debug::bench('queryItem', array($item, $extraCondition), $adaptor);
-            }
-            return $adaptor->queryItem($item, $extraCondition);
-        }
+        return $this->adaptorDynamo()->queryItem($item, $extraCondition);
 
     }
 
@@ -44,13 +49,7 @@ class Dynamodb extends Orm
      */
     public function scanItems(Model $item, $extraCondition = array())
     {
-        $adaptor = $this->adaptor();
-        if ($adaptor instanceof Adaptor) {
-            if (Debug::debug()) {
-                return Debug::bench('scanItems', array($item, $extraCondition), $adaptor);
-            }
-            return $adaptor->scanItems($item, $extraCondition);
-        }
+        return $this->adaptorDynamo()->scanItems($item, $extraCondition);
 
     }
 
@@ -62,13 +61,7 @@ class Dynamodb extends Orm
      */
     public function putItem(Model $item)
     {
-        $adaptor = $this->adaptor();
-        if ($adaptor instanceof Adaptor) {
-            if (Debug::debug()) {
-                return Debug::bench('putItem', array($item), $adaptor);
-            }
-            return $adaptor->putItem($item);
-        }
+        return $this->adaptorDynamo()->putItem($item);
 
     }
 
@@ -81,13 +74,7 @@ class Dynamodb extends Orm
      */
     public function deleteItem(Model $item)
     {
-        $adaptor = $this->adaptor();
-        if ($adaptor instanceof Adaptor) {
-            if (Debug::debug()) {
-                return Debug::bench('deleteItem', array($item), $adaptor);
-            }
-            return $adaptor->deleteItem($item);
-        }
+        return $this->adaptorDynamo()->deleteItem($item);
 
     }
 
@@ -100,13 +87,7 @@ class Dynamodb extends Orm
      */
     public function dropTable($table)
     {
-        $adaptor = $this->adaptor();
-        if ($adaptor instanceof Adaptor) {
-            if (Debug::debug()) {
-                return Debug::bench('dropTable', array($table), $adaptor);
-            }
-            return $adaptor->dropTable($table);
-        }
+        return $this->adaptorDynamo()->dropTable($table);
 
     }
 
@@ -114,17 +95,19 @@ class Dynamodb extends Orm
     /**
      * NOTE: API changed.
      * Read one model
-     * this supports relations, just setup in models
      * @param Model $model
      * @param array $extraCondition
+     * @param int $type
      */
     public function readModel(Model $model, $extraCondition = array(), $type = self::FETCH)
     {
         $item = null;
         switch ($type) {
             case self::FETCH:
+                $item = $this->adaptorDynamo()->queryItem($model, $extraCondition);
                 break;
             case self::SCAN:
+                $item = $this->adaptorDynamo()->scanItem($model, $extraCondition);
                 break;
         }
 
