@@ -130,7 +130,7 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
 
     public function testDropTable()
     {
-        $this->adaptor->dropTable(self::table);
+        $this->adaptor->dropTable(self::table, true);
         Debug::output();
 
     }

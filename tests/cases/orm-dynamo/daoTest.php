@@ -57,12 +57,22 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testCreateTable()
+    public function testCreate()
     {
         $this->dao->createTableIfNotExists($this->schema, true);
         $this->assertTrue($this->dao->tableExists(self::table));
+
     }
 
+    /**
+     * the main crud test
+     * tests:
+     * 1. insert
+     * 2. update
+     * 3. read one
+     * 4. read multi
+     * 5. delete
+     */
     public function testCRUD()
     {
         $id   = 'new-test-id here';
@@ -78,15 +88,27 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
         // query
         $mock = new Mock();
         $mock->setId($id);
-        $result = $this->dao->readModel($mock, Orm::FETCH_MODEL_QUERY);
-        Debug::setUserData('read model data', $result->toJson());
+        $this->dao->readModel($mock, Orm::FETCH_MODEL_QUERY);
+        Debug::setUserData('read model data by query', $mock->toArray());
         $this->assertEquals($data, $mock->toArray());
         // scan
         $mock = new Mock();
         $mock->setId($id);
         $result = $this->dao->readModel($mock, Orm::FETCH_MODEL_SCAN);
-        Debug::setUserData('read model data', $result->toJson());
+        Debug::setUserData('read model data by scan', $result->toArray());
         $this->assertEquals($data, $mock->toArray());
+
+        // next, we do update instead of insert...
+        $updatedData = 'This is new updated mock object';
+        $mockUpdate = new Mock();
+        $mockUpdate->setData($updatedData)
+                   ->setId($mock->getId());
+        $this->dao->writeModel($mockUpdate, array('mode' => Orm::WRITE_MODE_UPDATE));
+        // now let's read model again and see if it's updated...
+        $this->dao->readModel($mock, Orm::FETCH_MODEL_QUERY);
+        $this->assertEquals($mock->getData(), $mockUpdate->getData());
+        $this->assertNotEquals($mock->getBar(), $mockUpdate->getBar());
+        Debug::setUserData('model data after update', $mock->toArray());
 
         // test multiple
         // insert a few.
@@ -103,11 +125,19 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
             'fetchMode' => Orm::FETCH_MODEL_SCAN
         ));
         $this->assertTrue(count($results) == 5);
+        // delete
+        foreach ($results as $model) {
+            $this->dao->deleteModel($model);
+        }
+        $results = $this->dao->readModels($mock, array(
+            'fetchMode' => Orm::FETCH_MODEL_SCAN
+        ));
+        $this->assertEmpty($results);
     }
 
-    public function testDropTable()
+    public function testDeleteTable()
     {
-//        $this->dao->dropTable(self::table);
+        $this->dao->dropTable(self::table, true);
         Debug::output();
 
     }

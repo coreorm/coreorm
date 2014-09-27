@@ -1,6 +1,7 @@
 <?php
 namespace CoreORM\Adaptor;
 use Aws\DynamoDb\DynamoDbClient, \CoreORM\Model\Dynamodb AS Model, CoreORM\Utility\Debug;
+use Aws\DynamoDb\Enum\ReturnConsumedCapacity;
 use Aws\DynamoDb\Enum\ReturnValue;
 use CoreORM\Exception\Adaptor;
 use PhpParser\Node\Expr\BinaryOp\Mod;
@@ -163,9 +164,8 @@ class Dynamodb extends Orm
             'TableName' => $item->table(),
             'Item' => $this->client->formatAttributes($item->toArray(false)),
         );
-        if (Debug::debug()) {
-            $data['ReturnConsumedCapacity'] = 'TOTAL';
-        }
+        // add reporting right here
+        $data['ReturnConsumedCapacity'] = ReturnConsumedCapacity::TOTAL;
         return $data;
 
     }
@@ -209,11 +209,16 @@ class Dynamodb extends Orm
      * drop table and all contents...
      * Use with care!!!
      * @param $table
-     * @return \Guzzle\Service\Resource\Model
+     * @param bool $waitTillFinish
+     * @return \PDOStatement|void
      */
-    public function dropTable($table)
+    public function dropTable($table, $waitTillFinish = false)
     {
-        return $item = $this->query(array('TableName' => $table), 'deleteTable');
+        $result = $item = $this->query(array('TableName' => $table), 'deleteTable');
+        if ($waitTillFinish) {
+            $this->client->waitUntilTableNotExists(array('TableName' => $table));
+        }
+        return $result;
 
     }
 
@@ -250,7 +255,7 @@ class Dynamodb extends Orm
     {
         $success = $this->query($schema, 'createTable');
         if ($waitTillFinish) {
-            $this->client->waitUntil('TableExists', array(
+            $this->client->waitUntilTableExists(array(
                 'TableName' => Assoc::get($schema, 'TableName')
             ));
         }

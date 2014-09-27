@@ -105,13 +105,14 @@ class Orm extends Base
             'limit' => null,
             'useSlave' => false,
             // dynamo options
-            'fetchMode' => self::FETCH_MODEL_QUERY
+            'fetchMode' => self::FETCH_MODEL_SCAN
         ))
     {
         $condition = Assoc::get($option, 'condition', array());
         // dynamo
         if ($model instanceof DModel) {
-            $fetchMode = Assoc::get($option, 'fetchMode', self::FETCH_MODEL_QUERY);
+            // read models must be scan - unless you insist
+            $fetchMode = Assoc::get($option, 'fetchMode', self::FETCH_MODEL_SCAN);
             return $this->readDynamoModels($model, $condition, $fetchMode);
         }
         // relational DB
@@ -219,10 +220,18 @@ class Orm extends Base
     /**
      * delete
      * @param Model $model
+     * @param array $option
+     * @throws \CoreORM\Exception\Dao
      * @return \PDOStatement
      */
-    public function deleteModel(Model $model)
+    public function deleteModel(Model $model, $option = array(
+            'condition' => array()
+        ))
     {
+        // dynamo
+        if ($model instanceof DModel) {
+            return $this->adaptorDynamo()->deleteItem($model, Assoc::get($option, 'condition', array()));
+        }
         // compose sql
         $sqlGroup = $this->adaptor()->composeDeleteSQL($model, $this->adaptor()->getType());
         return $this->query($sqlGroup['sql'], $sqlGroup['bind']);
@@ -310,11 +319,12 @@ class Orm extends Base
      * drop table and all contents...
      * Use with care!!!
      * @param $table
+     * @param bool $waitTillFinish
      * @return \Guzzle\Service\Resource\Model
      */
-    public function dropTable($table)
+    public function dropTable($table, $waitTillFinish = false)
     {
-        return $this->adaptorDynamo()->dropTable($table);
+        return $this->adaptorDynamo()->dropTable($table, $waitTillFinish);
 
     }
 
@@ -322,12 +332,13 @@ class Orm extends Base
     /**
      * create table if not exist
      * @param $schema
+     * @param bool $waitTillFinished
      * @return bool
      * @throws \Exception
      */
-    public function createTableIfNotExists($schema)
+    public function createTableIfNotExists($schema, $waitTillFinished = true)
     {
-        return $this->adaptorDynamo()->createTableIfNotExists($schema);
+        return $this->adaptorDynamo()->createTableIfNotExists($schema, $waitTillFinished);
 
     }
 
@@ -403,7 +414,9 @@ class Orm extends Base
             return array();
         }
         $data = array();
+        $class = get_class($model);
         foreach ($items as $row) {
+            $model = new $class;
             foreach ($row as $field => $val) {
                 $model->rawSetFieldData($field, current($val));
             }

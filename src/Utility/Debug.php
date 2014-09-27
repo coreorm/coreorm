@@ -303,6 +303,9 @@ class Debug
                 break;
             }
         }
+        if (!is_string($value) && !is_numeric($value)) {
+            $value = var_export($value, 1);
+        }
         self::$DATA[self::USER][] = array($key, $value, $src);
 
     }// end setUserData

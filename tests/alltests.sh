@@ -24,5 +24,14 @@ echo 'ORM Tests [model]'
 echo '=================='
 ./phpunit cases/model
 
+echo 'ORM Tests [Dynamodb]'
+echo '=================='
+./phpunit cases/orm-dynamo
+
+echo 'Adaptor Tests [Dynamodb]'
+echo '=================='
+./phpunit cases/adaptor-dynamo
+
+
 export SET ENABLE_DEBUG=yes
 
