@@ -90,7 +90,7 @@ class Orm extends Base
      * @param Model $model
      * @param array $option
      * @throws \CoreORM\Exception\Dao
-     * @internal param array $extraCondition
+     * @internal param array $condition
      * @internal param array $bind
      * @internal param array $orderBy
      * @internal param null $limit
@@ -99,7 +99,7 @@ class Orm extends Base
      */
     public function readModels(Model $model, $option = array(
             // relation db options
-            'extraCondition' => array(),
+            'condition' => array(),
             'bind' => array(),
             'orderBy' => array(),
             'limit' => null,
@@ -109,6 +109,12 @@ class Orm extends Base
         ))
     {
         $condition = Assoc::get($option, 'condition', array());
+        // dynamo
+        if ($model instanceof DModel) {
+            $fetchMode = Assoc::get($option, 'fetchMode', self::FETCH_MODEL_QUERY);
+            return $this->readDynamoModels($model, $condition, $fetchMode);
+        }
+        // relational DB
         $bind = Assoc::get($option, 'bind', array());
         $orderBy = Assoc::get($option, 'orderBy', array());
         $limit = (int) Assoc::get($option, 'limit', 0);
@@ -183,6 +189,7 @@ class Orm extends Base
      * so this only saves the model itself
      * @param Model $model
      * @param array $option
+     * @return \CoreORM\Model|\PDOStatement|void
      * @throws \CoreORM\Exception\Dao
      */
     public function writeModel(Model $model, $option = array(
@@ -239,12 +246,12 @@ class Orm extends Base
     /**
      * query one model item
      * @param DModel $item
-     * @param array $extraCondition
+     * @param array $condition
      * @return \Guzzle\Service\Resource\Model|mixed|\PDOStatement
      */
-    public function queryItem(DModel $item, $extraCondition = array())
+    public function queryItem(DModel $item, $condition = array())
     {
-        return $this->adaptorDynamo()->queryItem($item, $extraCondition);
+        return $this->adaptorDynamo()->queryItem($item, $condition);
 
     }// end queryItem
 
@@ -252,12 +259,12 @@ class Orm extends Base
     /**
      * scan items
      * @param DModel $item
-     * @param $extraCondition
+     * @param $condition
      * @return \Guzzle\Service\Resource\Model|mixed
      */
-    public function scanItems(DModel $item, $extraCondition = array())
+    public function scanItems(DModel $item, $condition = array())
     {
-        return $this->adaptorDynamo()->scanItems($item, $extraCondition);
+        return $this->adaptorDynamo()->scanItems($item, $condition);
 
     }// end scanItems
 
@@ -343,19 +350,19 @@ class Orm extends Base
      * internal API
      * read dynamo model only
      * @param DModel $model
-     * @param array $extraCondition
+     * @param array $condition
      * @param $type
      * @return DModel
      */
-    protected function readDynamoModel(DModel $model, $extraCondition = array(), $type = self::FETCH)
+    protected function readDynamoModel(DModel $model, $condition = array(), $type = self::FETCH)
     {
         $item = null;
         switch ($type) {
             case self::FETCH_MODEL_QUERY:
-                $item = $this->adaptorDynamo()->queryItem($model, $extraCondition);
+                $item = $this->adaptorDynamo()->queryItem($model, $condition);
                 break;
             case self::FETCH_MODEL_SCAN:
-                $item = $this->adaptorDynamo()->scanItems($model, $extraCondition);
+                $item = $this->adaptorDynamo()->scanItems($model, $condition);
                 break;
         }
         if (empty($item)) {
@@ -366,6 +373,43 @@ class Orm extends Base
             $model->rawSetFieldData($field, current($val));
         }
         return $model;
+
+    }
+
+    /**
+     * internal API
+     * read dynamo models only
+     * @param DModel $model
+     * @param array $condition
+     * @param $type
+     * @return DModel
+     */
+    protected function readDynamoModels(DModel $model, $condition = array(), $type = self::FETCH)
+    {
+        $item = null;
+        switch ($type) {
+            case self::FETCH_MODEL_QUERY:
+                $item = $this->adaptorDynamo()->queryItem($model, $condition);
+                break;
+            case self::FETCH_MODEL_SCAN:
+                $item = $this->adaptorDynamo()->scanItems($model, $condition);
+                break;
+        }
+        if (empty($item)) {
+            return null;
+        }
+        $items = $item->get('Items');
+        if (empty($items)) {
+            return array();
+        }
+        $data = array();
+        foreach ($items as $row) {
+            foreach ($row as $field => $val) {
+                $model->rawSetFieldData($field, current($val));
+            }
+            $data[$model->primaryKey(true)] = $model;
+        }
+        return $data;
 
     }
 

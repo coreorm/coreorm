@@ -88,6 +88,21 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
         Debug::setUserData('read model data', $result->toJson());
         $this->assertEquals($data, $mock->toArray());
 
+        // test multiple
+        // insert a few.
+        for ($i = 0; $i <= 3; $i ++) {
+            $mock = new Mock();
+            $mock->setId($id . '-' . $i)
+                 ->setData('data is ' . $i);
+            $this->dao->writeModel($mock);
+        }
+        // retrieve all
+        $mock = new Mock();
+        $mock->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, $id);
+        $results = $this->dao->readModels($mock, array(
+            'fetchMode' => Orm::FETCH_MODEL_SCAN
+        ));
+        $this->assertTrue(count($results) == 5);
     }
 
     public function testDropTable()
