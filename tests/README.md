@@ -22,6 +22,15 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
     mkdir tmp;chmod 775 tmp;
 ```
 
+# to test dynamodb, please follow amazon's guideline to create a user that have full access to
+```test-user-data``` table, also ensure that in your aws credentials setting, have an entry named ```coreorm-test```
+Example:
+```
+[coreorm-test]
+aws_access_key_id=<your aws access key>
+aws_secret_access_key=<your aws secret key>
+```
+
 For mysql database, create new db:
  ```
  model_test
