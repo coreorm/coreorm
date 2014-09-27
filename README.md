@@ -113,7 +113,7 @@ Please read the README.md file under ```tests/``` directory.
     ));
 ```
 
-###NOTE: for Dynamodb, please follow Amazon's suggestion, have your credentials saved in
+*** NOTE: for Dynamodb, please follow Amazon's suggestion, have your credentials saved in
 ```/home/[your user]/.aws/credentials```
 in the following format:
 ```
