@@ -2,6 +2,26 @@ Modeller/DAO Tests
 ==================
 
 ### setup
+
+make sure you do
+    chmod +x tests/phpunit so it can run tests
+
+also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
+
+```
+    CREATE DATABASE `coreorm` CHARACTER SET utf8;
+    USE `coreorm`;
+    GRANT all ON `coreorm`.* TO core@localhost IDENTIFIED BY 'test';
+
+# also add a slave user for it so we can simulate slave test
+
+    GRANT select ON `coreorm`.* TO core_slave@localhost IDENTIFIED BY 'test';
+
+# to test sqlite, make sure you do the following:
+    // under tests/support folder, run
+    mkdir tmp;chmod 775 tmp;
+```
+
 For mysql database, create new db:
  ```
  model_test

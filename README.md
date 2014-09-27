@@ -85,24 +85,7 @@ run
     composer dump-autoload
 
 ### unit tests:
-make sure you do
-    chmod +x tests/phpunit so it can run tests
-
-also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
-
-```
-    CREATE DATABASE `coreorm` CHARACTER SET utf8;
-    USE `coreorm`;
-    GRANT all ON `coreorm`.* TO core@localhost IDENTIFIED BY 'test';
-
-# also add a slave user for it so we can simulate slave test
-
-    GRANT select ON `coreorm`.* TO core_slave@localhost IDENTIFIED BY 'test';
-
-# to test sqlite, make sure you do the following:
-    // under tests/support folder, run
-    mkdir tmp;chmod 775 tmp;
-```
+Please read the README.md file under ```tests/``` directory.
 
 ### setup the config this way (runtime).
 
@@ -131,12 +114,13 @@ also, run the following sql in local (127.0.0.1) mysql instance to test adaptors
 ```
 
 ###NOTE: for Dynamodb, please follow Amazon's suggestion, have your credentials saved in
-```/home/[your user]/.aws/credentials
+```/home/[your user]/.aws/credentials```
 in the following format:
 ```
 [my-dynamo-db]
 aws_access_key_id=xxxxx
 aws_secret_access_key=yyyyy
+```
 
 and ensure that your database setting follows the format:
 ```
@@ -147,6 +131,7 @@ and ensure that your database setting follows the format:
             'adaptor' => CoreORM\Adaptor\Pdo::ADAPTOR_DYNAMODB
         )
     ));
+```
 
 ### generating models
 Run the following commands at project root
@@ -213,6 +198,11 @@ then just run
 ```
     ./modeller config.php
 ```
+
+***NOTE
+Since Dynamodb is not strictly fixed with fields, if you want to have a model with fixed number of fields, please setup
+a similar table structure in mysql or sqlite then generate it using the generator, but make sure you update the parent
+class to CoreORM\Model\Dynamodb instead of the original one.
 
 all the models will be generated in the directory you specified in the configuration file.
 
