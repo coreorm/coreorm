@@ -104,11 +104,7 @@ class Debug
                 self::dumpException($arg);
             } else {
                 $str .= '<pre>';
-                if (is_object($arg) || is_array($arg)) {
-                    $arg = print_r($arg, 1);
-                } else {
-                    $arg = var_export($arg, 1);
-                }
+                $arg = self::printVar($arg);
                 // put html tags into proper entities to show on page!
                 if (strpos($arg, '<') !== false && strpos($arg, '>') !== false) {
                     // this is html code!
@@ -151,7 +147,7 @@ class Debug
                 // check if v is array of objects, if so, DO NOT EXPORT ALL!
                 if ($n == 'args' && is_array($v)) {
                     // just export type if it's object v
-                    $v = var_export($v, 1);
+                    $v = self::printVar($v);
                 } else {
                     $v = (string) $v;
                 }
@@ -229,7 +225,7 @@ class Debug
         if ($class instanceof Pdo || $class instanceof Dynamodb) {
             return self::$DATA[self::PROFILER][] = array(
                 'CLASS'  => $classStr,
-                'SQL' => var_export($params[0], 1),
+                'SQL' => self::printVar($params[0]),
                 'BIND' => !empty($params[1]) ? $params[1] : null,
                 'DURATION' => $duration,
                 'MEM' => $mem
@@ -266,7 +262,7 @@ class Debug
             if ($cnt > 0) {
                 $tbl->addSeparator();
             }
-            $bind = var_export($row['BIND'], 1);
+            $bind = self::printVar($row['BIND']);
             if ($simple) {
                 $sql = substr($row['SQL'], 0, 500);
                 if ($row['SQL'] != $sql) {
@@ -274,7 +270,7 @@ class Debug
                 }
                 $row['SQL'] = $sql;
             }
-            $tbl->addRow(array($row['SQL'], $row['DURATION'], $bind, 1));
+            $tbl->addRow(array($row['SQL'], $row['DURATION'], $bind));
             $cnt ++;
         }
         echo PHP_EOL . $tbl->getTable() . PHP_EOL;
@@ -304,7 +300,7 @@ class Debug
             }
         }
         if (!is_string($value) && !is_numeric($value)) {
-            $value = var_export($value, 1);
+            $value = self::printVar($value);
         }
         self::$DATA[self::USER][] = array($key, $value, $src);
 
@@ -339,7 +335,7 @@ class Debug
                 }
                 $row['PARAMS'] = $tmp;
             }
-            $row['PARAMS'] = var_export($row['PARAMS'], 1);
+            $row['PARAMS'] = self::printVar($row['PARAMS']);
             $tbl->addRow($row);
             $cnt ++;
         }
@@ -387,5 +383,19 @@ class Debug
         self::sqlProfile($simple);
 
     }// end output
+
+
+    /**
+     * export one variable
+     * @param $var
+     * @return string
+     */
+    protected static function printVar($var)
+    {
+        ob_start();
+        var_dump($var);
+        return ob_get_clean();
+
+    }
 
 }// end Debug

@@ -131,7 +131,7 @@ and ensure that your database setting follows the format:
             'adaptor' => CoreORM\Adaptor\Pdo::ADAPTOR_DYNAMODB
         )
     ));
-    // then set default db to the above one
+    // then set default db
     setDefaultDb('main');
 ```
 
