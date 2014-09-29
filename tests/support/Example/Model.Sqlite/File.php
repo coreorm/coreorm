@@ -16,7 +16,7 @@ class File extends Model
     protected $fields = array(
         'attachment_id' => array(
             'type' => 'int',
-            'required' => '1',
+            'required' => true,
             'field' => 'id',
             'field_key' => 'attachment_id',
             'field_map' => '`attachment`.`id`',
@@ -25,7 +25,7 @@ class File extends Model
         ),
         'attachment_user_id' => array(
             'type' => 'int',
-            'required' => '1',
+            'required' => true,
             'field' => 'user_id',
             'field_key' => 'attachment_user_id',
             'field_map' => '`attachment`.`user_id`',
@@ -34,7 +34,7 @@ class File extends Model
         ),
         'attachment_filename' => array(
             'type' => 'string',
-            'required' => '',
+            'required' => false,
             'field' => 'filename',
             'field_key' => 'attachment_filename',
             'field_map' => '`attachment`.`filename`',
@@ -43,7 +43,7 @@ class File extends Model
         ),
         'attachment_size' => array(
             'type' => 'float',
-            'required' => '',
+            'required' => false,
             'field' => 'size',
             'field_key' => 'attachment_size',
             'field_map' => '`attachment`.`size`',

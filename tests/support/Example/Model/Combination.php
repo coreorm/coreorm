@@ -16,7 +16,7 @@ class Combination extends Model
     protected $fields = array(
         'combined_key_table_id_1' => array(
             'type' => 'int',
-            'required' => '1',
+            'required' => true,
             'field' => 'id_1',
             'field_key' => 'combined_key_table_id_1',
             'field_map' => '`combined_key_table`.`id_1`',
@@ -25,7 +25,7 @@ class Combination extends Model
         ),
         'combined_key_table_id_2' => array(
             'type' => 'int',
-            'required' => '1',
+            'required' => true,
             'field' => 'id_2',
             'field_key' => 'combined_key_table_id_2',
             'field_map' => '`combined_key_table`.`id_2`',
@@ -34,7 +34,7 @@ class Combination extends Model
         ),
         'combined_key_table_name' => array(
             'type' => 'string',
-            'required' => '',
+            'required' => false,
             'field' => 'name',
             'field_key' => 'combined_key_table_name',
             'field_map' => '`combined_key_table`.`name`',
@@ -43,7 +43,7 @@ class Combination extends Model
         ),
         'combined_key_table_user_id' => array(
             'type' => 'int',
-            'required' => '',
+            'required' => false,
             'field' => 'user_id',
             'field_key' => 'combined_key_table_user_id',
             'field_map' => '`combined_key_table`.`user_id`',

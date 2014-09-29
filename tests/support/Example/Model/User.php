@@ -16,7 +16,7 @@ class User extends Model
     protected $fields = array(
         'user_id' => array(
             'type' => 'int',
-            'required' => '1',
+            'required' => true,
             'field' => 'id',
             'field_key' => 'user_id',
             'field_map' => '`user`.`id`',
@@ -25,7 +25,7 @@ class User extends Model
         ),
         'user_name' => array(
             'type' => 'string',
-            'required' => '',
+            'required' => false,
             'field' => 'name',
             'field_key' => 'user_name',
             'field_map' => '`user`.`name`',
@@ -34,7 +34,7 @@ class User extends Model
         ),
         'user_address' => array(
             'type' => 'string',
-            'required' => '',
+            'required' => false,
             'field' => 'address',
             'field_key' => 'user_address',
             'field_map' => '`user`.`address`',
@@ -43,7 +43,7 @@ class User extends Model
         ),
         'user_birthdate' => array(
             'type' => 'datetime',
-            'required' => '',
+            'required' => false,
             'field' => 'birthdate',
             'field_key' => 'user_birthdate',
             'field_map' => '`user`.`birthdate`',

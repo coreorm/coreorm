@@ -17,16 +17,17 @@ class Mock extends Dynamodb
     protected $fields = array(
         'id' => array(
             'type' => 'string',
-            'required' => 'yes',
+            'required' => true,
             'field' => 'id',
             'field_key' => 'id',
             'field_map' => 'id',
             'getter' => 'getId',
             'setter' => 'setId',
+            'key_type' => 'range',
         ),
         'foo' => array(
             'type' => 'string',
-            'required' => 'no',
+            'required' => false,
             'field' => 'foo',
             'field_key' => 'foo',
             'field_map' => 'foo',
@@ -35,7 +36,7 @@ class Mock extends Dynamodb
         ),
         'bar' => array(
             'type' => 'int',
-            'required' => 'no',
+            'required' => false,
             'field' => 'bar',
             'field_key' => 'bar',
             'field_map' => 'bar',
@@ -44,7 +45,7 @@ class Mock extends Dynamodb
         ),
         'data' => array(
             'type' => 'string',
-            'required' => 'no',
+            'required' => false,
             'field' => 'data',
             'field_key' => 'data',
             'field_map' => 'data',
@@ -53,7 +54,7 @@ class Mock extends Dynamodb
         ),
         'time' => array(
             'type' => 'string',
-            'required' => 'no',
+            'required' => false,
             'field' => 'time',
             'field_key' => 'time',
             'field_map' => 'time',

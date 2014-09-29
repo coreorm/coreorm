@@ -15,7 +15,7 @@ class Login extends Model
     protected $fields = array(
         'login_user_id' => array(
             'type' => 'int',
-            'required' => '1',
+            'required' => true,
             'field' => 'user_id',
             'field_key' => 'login_user_id',
             'field_map' => '`login`.`user_id`',
@@ -24,7 +24,7 @@ class Login extends Model
         ),
         'login_username' => array(
             'type' => 'string',
-            'required' => '1',
+            'required' => true,
             'field' => 'username',
             'field_key' => 'login_username',
             'field_map' => '`login`.`username`',
@@ -33,7 +33,7 @@ class Login extends Model
         ),
         'login_password' => array(
             'type' => 'string',
-            'required' => '1',
+            'required' => true,
             'field' => 'password',
             'field_key' => 'login_password',
             'field_map' => '`login`.`password`',

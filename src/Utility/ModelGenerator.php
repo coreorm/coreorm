@@ -167,12 +167,16 @@ class ModelGenerator
                 } else {
                     $type = 'varchar';
                 }
-                $info[] = array(
+                $piece = array(
                     'Field' => $field,
                     'Type' => $type,
                     'Key' => isset($keys[$field]) ? 'PRI' : '',
-                    'Null' => isset($keys[$field]) ? 'NO' : 'YES'
+                    'Null' => isset($keys[$field]) ? 'NO' : 'YES',
                 );
+                if (!empty($keys[$field])) {
+                    $piece['Key_Type'] = $keys[$field];
+                }
+                $info[] = $piece;
             }
         }
         return $info;
@@ -225,13 +229,16 @@ class ModelGenerator
             $camelName = String::camelCase($fName);
             $fields[$fKey] = $fieldInfo = array(
                 'type' => $phpType,
-                'required' => $fRequired ? 'yes':'no',
+                'required' => $fRequired,
                 'field' => $fName,
                 'field_key' => $fKey,
                 'field_map' => $fKeyMap,
                 'getter' => "get{$camelName}",
                 'setter' => "set{$camelName}",
             );
+            if ($isDynamo && Assoc::get($field, 'Key') == 'PRI') {
+                $fields[$fKey]['key_type'] = $fieldInfo['key_type'] = Assoc::get($field, 'Key_Type');
+            }
             // build sql fields here:
             $constant = strtoupper('FIELD_' . $fName);
             $sqlFields[$constant] = $fKeyMap;
@@ -314,8 +321,13 @@ class ModelGenerator
                     $selectFields[$name] = "    CONST FIELD_MAP_{$fieldConst} = '{$v}';";
                 }
                 // compose array
+                if ($k != 'required') {
+                    $v = "'{$v}'";
+                } else {
+                    $v = ($v) ? 'true' : 'false';
+                }
                 $tmp .= "
-            '{$k}' => '{$v}',";
+            '{$k}' => {$v},";
             }
             $tmp .= "
         ),";
