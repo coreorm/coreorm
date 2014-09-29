@@ -8,6 +8,7 @@ namespace CoreORM\Utility;
 use CoreORM\Dao\Base;
 use CoreORM\Dao\Orm;
 use CoreORM\Model;
+use CoreORM\Adaptor\Pdo;
 
 class ModelGenerator
 {
@@ -108,6 +109,12 @@ class ModelGenerator
 
     public function setupDao()
     {
+        // deal with dynamos here
+        if (Config::get('database.adaptor') == Pdo::ADAPTOR_DYNAMODB) {
+            $this->dao = Pdo::ADAPTOR_DYNAMODB;
+            return;
+        }
+        // otherwise, do the relation db here
         try {
             $this->dao = new Orm('default', Config::get('database'));
             $this->dao->testConnection();
@@ -118,6 +125,60 @@ class ModelGenerator
 
     }
 
+
+    /**
+     * get table info
+     * @param $table
+     * @param $modelInfo
+     * @return array
+     */
+    public function getTableInfo($table, $modelInfo)
+    {
+        $info = array();
+        if ($this->dao instanceof Orm) {
+            $info = $this->dao->describe($table);
+        }
+
+        if ($this->dao == Pdo::ADAPTOR_DYNAMODB) {
+            // read from config and build it...
+            /*
+            [0] =>
+              array(6) {
+                'Field' =>
+                string(2) "id"
+                'Type' =>
+                string(16) "int(11) unsigned"
+                'Null' =>
+                string(2) "NO"
+                'Key' =>
+                string(3) "PRI"
+                'Default' =>
+                NULL
+                'Extra' =>
+                string(14) "auto_increment"
+              }
+
+            */
+            $fields = Assoc::get($modelInfo, 'fields');
+            $keys = Assoc::get($modelInfo, 'keys');
+            foreach ($fields as $field => $type) {
+                if ($type == 'int' || $type == 'integer') {
+                    $type = 'int';
+                } else {
+                    $type = 'varchar';
+                }
+                $info[] = array(
+                    'Field' => $field,
+                    'Type' => $type,
+                    'Key' => isset($keys[$field]) ? 'PRI' : ''
+                );
+            }
+        }
+        return $info;
+
+    }
+
+
     public function getTablesAndGenerateModels()
     {
         $tables = array();
@@ -125,7 +186,7 @@ class ModelGenerator
         foreach ($models as $table => $modelInfo) {
             try {
                 self::msg('-- analysing table ' . $table);
-                $tableInfo = $this->dao->describe($table);
+                $tableInfo = $this->gettableInfo($table, $modelInfo);
                 $this->generateModel($table, $tableInfo, $modelInfo);
             } catch (\Exception $e) {
                 self::error('Error analyzing table: ' . $table . ': ' . $e->__toString());
@@ -137,6 +198,7 @@ class ModelGenerator
 
     public function generateModel($table, $tableInfo, $modelInfo)
     {
+        $isDynamo = ($this->dao == Pdo::ADAPTOR_DYNAMODB);
         // figure out path and namespace first
         $path = Config::get('path');
         $ns = Config::get('namespace');
@@ -151,8 +213,8 @@ class ModelGenerator
         $path .= '/' . $className . '.php';
         foreach ($tableInfo as $field) {
             $fName = Assoc::get($field, 'Field');
-            $fKey   = $table . '_' . $fName;
-            $fKeyMap = "`{$table}`.`{$fName}`";
+            $fKey   = $isDynamo ? $fName : $table . '_' . $fName;
+            $fKeyMap = $isDynamo ? $fName : "`{$table}`.`{$fName}`";
             $fType = Assoc::get($field, 'Type');
             $fRequired = Assoc::get($field, 'Null') == 'NO';
             if (Assoc::get($field, 'Key') == 'PRI') {
@@ -223,8 +285,22 @@ class ModelGenerator
 
     }// end generateModel
 
+
+    /**
+     * @param $table
+     * @param $className
+     * @param $ns
+     * @param $PrimaryKey
+     * @param $sqlFields
+     * @param $fields
+     * @param $setters
+     * @param $getters
+     * @param $mergedRelations
+     * @return string
+     */
     protected function composeClass($table, $className, $ns, $PrimaryKey, $sqlFields, $fields, $setters, $getters, $mergedRelations)
     {
+        $isDynamo = ($this->dao == Pdo::ADAPTOR_DYNAMODB);
         // compose the class
         // fields
         $tmpAr = array();
@@ -274,6 +350,9 @@ class ModelGenerator
         }
         $setter = implode('', $setters);
         $getter = implode('', $getters);
+        // super class
+        $superClass = $isDynamo ? 'Dynamodb' : 'Model';
+        $useDynamo = $isDynamo ? 'use CoreORM\\Model\\DynamoDb' : 'use CoreORM\\Model';
         // compose
         return "<?php
 /**
@@ -281,8 +360,8 @@ class ModelGenerator
  * @author ModelGenerator
  */
 namespace {$ns};
-use CoreORM\\Model;
-class {$className} extends Model
+{$useDynamo};
+class {$className} extends {$superClass}
 {
 $constants
     protected \$table = '{$table}';
