@@ -202,9 +202,34 @@ then just run
 ```
 
 ***NOTE
-Since Dynamodb is not strictly fixed with fields, if you want to have a model with fixed number of fields, please setup
-a similar table structure in mysql or sqlite then generate it using the generator, but make sure you update the parent
-class to CoreORM\Model\Dynamodb instead of the original one.
+Dynamodb Model Config should be in a slightly altered format, see below as an example (or check ```tests/support/Example/config.dynamodb.php```):
+```
+$dir = realpath(__DIR__ . '/Model.Dynamo/');
+return array(
+    'path' => $dir,
+    'namespace' => 'Example\\Model',
+    'database' => array(
+        'adaptor' => \CoreORM\Adaptor\Pdo::ADAPTOR_DYNAMODB
+    ),
+    'model' => array(
+        'user-table' => array(
+            'class' => 'User',
+            'fields' => array(
+                'id' => 'int',
+                'name' => 'string',
+                'address' => 'string',
+                'created_at' => 'int'
+            ),
+            'keys' => array(
+                'id' => 'hash',
+                'name' => 'range',
+            )
+        ),
+    )
+);
+```
+Notice that in the example above, fields contains all fields you would like to put in there (due to the nature of dynamodb,
+these are NOT part of table, but you can push to add to it). And you need to specify the keys explicitly.
 
 all the models will be generated in the directory you specified in the configuration file.
 
