@@ -1,52 +1,70 @@
 <?php
 /**
- * Mock object
- * for dynamo
+ * Mock model
+ * @author ModelGenerator
  */
 namespace Example\Model;
-use CoreORM\Model\Dynamodb;
-
-/**
- * Class Mock
- * @package Example\Model
- */
+use CoreORM\Model\DynamoDb;
 class Mock extends Dynamodb
 {
+    CONST FIELD_ID = 'id';
+    CONST FIELD_FOO = 'foo';
+    CONST FIELD_BAR = 'bar';
+    CONST FIELD_DATA = 'data';
+    CONST FIELD_TIME = 'time';
+
     protected $table = 'test-user-data';
     protected $fields = array(
         'id' => array(
             'type' => 'string',
+            'required' => 'yes',
             'field' => 'id',
-            'required' => '1',
             'field_key' => 'id',
             'field_map' => 'id',
+            'getter' => 'getId',
+            'setter' => 'setId',
         ),
         'foo' => array(
             'type' => 'string',
-            'field_map' => 'foo',
+            'required' => 'no',
             'field' => 'foo',
             'field_key' => 'foo',
+            'field_map' => 'foo',
+            'getter' => 'getFoo',
+            'setter' => 'setFoo',
         ),
         'bar' => array(
             'type' => 'int',
-            'field_map' => 'bar',
+            'required' => 'no',
             'field' => 'bar',
             'field_key' => 'bar',
+            'field_map' => 'bar',
+            'getter' => 'getBar',
+            'setter' => 'setBar',
         ),
         'data' => array(
             'type' => 'string',
-            'field_map' => 'data',
+            'required' => 'no',
             'field' => 'data',
             'field_key' => 'data',
+            'field_map' => 'data',
+            'getter' => 'getData',
+            'setter' => 'setData',
         ),
         'time' => array(
             'type' => 'string',
-            'field_map' => 'time',
+            'required' => 'no',
             'field' => 'time',
             'field_key' => 'time',
+            'field_map' => 'time',
+            'getter' => 'getTime',
+            'setter' => 'setTime',
         ),
     );
     protected $key = array('id');
+    protected $relations = array(
+    );
+    
     /**
      * set Id
      * @param mixed $value
@@ -75,7 +93,7 @@ class Mock extends Dynamodb
         return parent::rawSetFieldData('bar', $value);
     }
     /**
-     * set data
+     * set Data
      * @param mixed $value
      * @return $this
      */
@@ -84,7 +102,7 @@ class Mock extends Dynamodb
         return parent::rawSetFieldData('data', $value);
     }
     /**
-     * set time
+     * set Time
      * @param mixed $value
      * @return $this
      */
@@ -92,11 +110,12 @@ class Mock extends Dynamodb
     {
         return parent::rawSetFieldData('time', $value);
     }
+    
     /**
      * retrieve Id
      * @param mixed $default
      * @param array $filter filter call back function
-     * @return int
+     * @return string
      */
     public function getId($default = null, $filter = array())
     {
@@ -116,14 +135,14 @@ class Mock extends Dynamodb
      * retrieve Bar
      * @param mixed $default
      * @param array $filter filter call back function
-     * @return string
+     * @return int
      */
     public function getBar($default = null, $filter = array())
     {
         return parent::rawGetFieldData('bar', $default, $filter);
     }
     /**
-     * retrieve data
+     * retrieve Data
      * @param mixed $default
      * @param array $filter filter call back function
      * @return string
@@ -133,7 +152,7 @@ class Mock extends Dynamodb
         return parent::rawGetFieldData('data', $default, $filter);
     }
     /**
-     * retrieve time
+     * retrieve Time
      * @param mixed $default
      * @param array $filter filter call back function
      * @return string
@@ -142,5 +161,4 @@ class Mock extends Dynamodb
     {
         return parent::rawGetFieldData('time', $default, $filter);
     }
-
 }

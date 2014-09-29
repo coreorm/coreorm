@@ -170,7 +170,8 @@ class ModelGenerator
                 $info[] = array(
                     'Field' => $field,
                     'Type' => $type,
-                    'Key' => isset($keys[$field]) ? 'PRI' : ''
+                    'Key' => isset($keys[$field]) ? 'PRI' : '',
+                    'Null' => isset($keys[$field]) ? 'NO' : 'YES'
                 );
             }
         }
@@ -224,7 +225,7 @@ class ModelGenerator
             $camelName = String::camelCase($fName);
             $fields[$fKey] = $fieldInfo = array(
                 'type' => $phpType,
-                'required' => $fRequired,
+                'required' => $fRequired ? 'yes':'no',
                 'field' => $fName,
                 'field_key' => $fKey,
                 'field_map' => $fKeyMap,

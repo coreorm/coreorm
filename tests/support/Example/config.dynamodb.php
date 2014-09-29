@@ -28,5 +28,18 @@ return array(
                 'name' => 'range',
             )
         ),
+        'test-user-data' => array(
+            'class' => 'Mock',
+            'fields' => array(
+                'id' => 'string',
+                'foo' => 'string',
+                'bar' => 'int',
+                'data' => 'string',
+                'time' => 'string',
+            ),
+            'keys' => array(
+                'id' => 'range'
+            )
+        )
     )
 );

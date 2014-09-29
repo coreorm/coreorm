@@ -16,7 +16,7 @@ class User extends Dynamodb
     protected $fields = array(
         'id' => array(
             'type' => 'int',
-            'required' => '',
+            'required' => 'yes',
             'field' => 'id',
             'field_key' => 'id',
             'field_map' => 'id',
@@ -25,7 +25,7 @@ class User extends Dynamodb
         ),
         'name' => array(
             'type' => 'string',
-            'required' => '',
+            'required' => 'yes',
             'field' => 'name',
             'field_key' => 'name',
             'field_map' => 'name',
@@ -34,7 +34,7 @@ class User extends Dynamodb
         ),
         'address' => array(
             'type' => 'string',
-            'required' => '',
+            'required' => 'no',
             'field' => 'address',
             'field_key' => 'address',
             'field_map' => 'address',
@@ -43,7 +43,7 @@ class User extends Dynamodb
         ),
         'created_at' => array(
             'type' => 'int',
-            'required' => '',
+            'required' => 'no',
             'field' => 'created_at',
             'field_key' => 'created_at',
             'field_map' => 'created_at',
