@@ -102,8 +102,9 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
         $updatedData = 'This is new updated mock object';
         $mockUpdate = new Mock();
         $mockUpdate->setData($updatedData)
-                   ->setId($mock->getId());
-        $this->dao->writeModel($mockUpdate, array('mode' => Orm::WRITE_MODE_UPDATE));
+                   ->setId($mock->getId())
+                   ->state(\CoreORM\Model::STATE_READ) ;
+        $this->dao->writeModel($mockUpdate);
         // now let's read model again and see if it's updated...
         $this->dao->readModel($mock, Orm::FETCH_MODEL_QUERY);
         $this->assertEquals($mock->getData(), $mockUpdate->getData());

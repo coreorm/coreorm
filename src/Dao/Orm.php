@@ -14,9 +14,6 @@ class Orm extends Base
     // dynamo fetch modes
     const FETCH_MODEL_QUERY = 1;
     const FETCH_MODEL_SCAN  = 2;
-    // dynamo update modes
-    const WRITE_MODE_INSERT = 3;
-    const WRITE_MODE_UPDATE = 4;
 
     /**
      * Read one model
@@ -193,14 +190,11 @@ class Orm extends Base
      * @return \CoreORM\Model|\PDOStatement|void
      * @throws \CoreORM\Exception\Dao
      */
-    public function writeModel(Model $model, $option = array(
-            'mode' => self::WRITE_MODE_INSERT
-        ))
+    public function writeModel(Model $model)
     {
         // shift to dynamo if model is dynamo
         if ($model instanceof DModel) {
-            $mode = Assoc::get($option, 'mode', self::WRITE_MODE_INSERT);
-            if ($mode == self::WRITE_MODE_INSERT) {
+            if ($model->state() == Model::STATE_NEW) {
                 // insert a new dynamo object
                 return $this->putItem($model);
             }
