@@ -239,7 +239,7 @@ class Orm extends Base
     }// end deleteModel
 
 
-/*---------------[dynamo specific functions]-----------------*/
+    /*---------------[dynamo specific functions]-----------------*/
 
     /**
      * dynamo adaptor
@@ -355,7 +355,7 @@ class Orm extends Base
 
     }
 
-/*---------------[dynamo object functions]-----------------*/
+    /*---------------[dynamo object functions]-----------------*/
 
     /**
      * internal API
@@ -379,8 +379,14 @@ class Orm extends Base
         if (empty($item)) {
             return null;
         }
+        if ($item->get('Count') <= 0) {
+            return null;
+        }
         $row = (array) current($item->get('Items'));
         foreach ($row as $field => $val) {
+            if (!is_array($val)) {
+                continue;
+            }
             $model->rawSetFieldData($field, current($val));
         }
         return $model;
@@ -412,6 +418,9 @@ class Orm extends Base
         $items = $item->get('Items');
         if (empty($items)) {
             return array();
+        }
+        if ($item->get('Count') <= 0) {
+            return null;
         }
         $data = array();
         $class = get_class($model);
