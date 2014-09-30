@@ -13,8 +13,9 @@ use CoreORM\Model, CoreORM\Utility\Assoc;
 class Dynamodb extends Model
 {
     const READ = 1;
-    const DELETE = 2;
-    const UPDATE = 3;
+    const SCAN = 2;
+    const DELETE = 3;
+    const UPDATE = 4;
 
     /**
      * query condition
@@ -58,8 +59,10 @@ class Dynamodb extends Model
     {
         $opts = (array) $opts;
         $opts['TableName'] = $this->table();
+        $qType = $type;
         switch ($type) {
             case self::READ:
+            case self::SCAN:
                 if (empty($this->condition)) {
                     // compose by field
                     foreach ($this->key as $field) {
@@ -75,8 +78,8 @@ class Dynamodb extends Model
                         }
                     }
                 }
-                $opts['KeyConditions'] = $this->condition;
-
+                $key = ($qType == self::READ) ? 'KeyConditions' : 'ScanFilter';
+                $opts[$key] = $this->condition;
                 break;
             case self::UPDATE:
                 foreach ($this->data as $field => $value) {
