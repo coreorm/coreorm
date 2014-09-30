@@ -45,7 +45,7 @@ class ModelGenerator
 
     public static function usage($file)
     {
-        echo "USAGE:" . PHP_EOL . "{$file} [model config].json" . PHP_EOL;
+        echo "USAGE:" . PHP_EOL . "{$file} [model config].php" . PHP_EOL;
     }
 
     public static function msg($msg)
