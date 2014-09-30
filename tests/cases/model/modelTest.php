@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../header.php';
-use Example\Model\User;
+use Example\Model\User, \CoreORM\Utility\Debug;
 $modelDir = realpath(__DIR__ . '/../../support/Example/Model') . '/';
 require_once $modelDir . 'User.php';
 /**
@@ -40,6 +40,7 @@ class TestModel extends PHPUnit_Framework_TestCase
         // reverse
         $obj = json_decode($jsonHtml);
         $this->assertEquals($obj->name, $nameHtml);
+        Debug::setUserData('equal:', $obj->name . ' = ' . $nameHtml);
     }
 
     public function testDatetime()
@@ -50,7 +51,29 @@ class TestModel extends PHPUnit_Framework_TestCase
             'user_birthdate' => $date
         ));
         $newDate = $user->getBirthdate('F d Y', null, array('strtolower'));
-        dump($newDate);
+        $this->assertEquals($newDate, strtolower(date('F d Y', strtotime($date))));
+        Debug::setUserData('equal:', $newDate . ' = ' . strtolower(date('F d Y', strtotime($date))));
+    }
 
+
+    public function testInit()
+    {
+        $user = new InitMock();
+        $this->assertEquals($user->table(), 'new user table');
+    }
+
+    public function testDebug()
+    {
+        Debug::output();
+    }
+
+}
+// mock for init test
+class InitMock extends User
+{
+    public function init()
+    {
+        parent::init();
+        $this->table('new user table');
     }
 }
