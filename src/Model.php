@@ -372,11 +372,15 @@ class Model
 
 
     /**
-     * the table name
+     * the table name - also supports table name override
+     * @param string $newTableName
      * @return string
      */
-    public function table()
+    public function table($newTableName = null)
     {
+        if (!empty($newTableName)) {
+            $this->table = $newTableName;
+        }
         return $this->table;
 
     }// end table
