@@ -87,6 +87,16 @@ class Model
 
 
     /**
+     * the init callback
+     * at constructor
+     */
+    public function init()
+    {
+
+    }// end init
+
+
+    /**
      * constructor
      * NOTE: set up from constructor will make the object
      * in read state (as we use this to setup the rows)
@@ -98,6 +108,8 @@ class Model
         if (!empty($data) && !empty($state)) {
             $this->rawSetUp($data, $state);
         }
+        // so init can actually modify data/state if necessary
+        $this->init();
 
     }// end __construct
 
