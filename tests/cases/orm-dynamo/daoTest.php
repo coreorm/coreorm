@@ -75,6 +75,19 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
      */
     public function testCRUD()
     {
+        // multiple write
+        $models = array();
+        for ($i = 0; $i < 5; $i ++) {
+            $model = new Mock();
+            $model->setId('ID::' . $i)
+                  ->setBar(123)
+                  ->setFoo('hello');
+            $models[] = $model;
+        }
+        $results = $this->dao->writeModels($models, 3, true);
+        $this->assertNotEmpty($results);
+        Debug::setUserData('batch write result', $results);
+        // test single insert
         $id   = 'new-test-id here';
         $mock = new Mock();
         $mock->setId($id)
@@ -121,13 +134,14 @@ class TestCrudDynamoDao extends PHPUnit_Framework_TestCase
         }
         // retrieve all
         $mock = new Mock();
-        $mock->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, $id);
+        $mock->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, 'here');
         $results = $this->dao->readModels($mock, array(
             'fetchMode' => Orm::FETCH_MODEL_SCAN
         ));
-        $this->assertTrue(count($results) == 5);
+        $this->assertTrue(count($results) >= 5);
         // delete
         foreach ($results as $model) {
+            Debug::setUserData('model from scan', $model->toArray());
             $this->dao->deleteModel($model);
         }
         $results = $this->dao->readModels($mock, array(

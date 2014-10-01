@@ -171,6 +171,27 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
         $this->dao->deleteModel($c);
         dump($c->toJson(true));
 
+        // test batch write
+        $models = array();
+        $name = "TEST::'NAME'";
+        for ($i = 1; $i <= 5; $i ++) {
+            $user = new User();
+            $user->setName($name)
+                 ->setAddress('ADDRESS ' . $i);
+            $models[$i] = $user;
+        }
+        // normal batch
+        $results = $this->dao->writeModels($models, 2, true);
+        $this->assertNotEmpty($results);
+        // 1 batch
+        $results = $this->dao->writeModels($models, 10, true);
+        $this->assertNotEmpty($results);
+        // this is an individual operation on batch
+        $results = $this->dao->writeModels($models, 0, true);
+        $this->assertNotEmpty($results);
+        $this->assertNotEmpty(current($models)->primaryKey(true));
+        Debug::setUserData('Results', $results);
+
         // output benchmarks here
         Debug::output(1);
 

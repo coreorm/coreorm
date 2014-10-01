@@ -123,6 +123,17 @@ class Dynamodb extends Orm
 
     }
 
+    /**
+     * batch put items
+     * @param $data
+     * @return \PDOStatement|void
+     */
+    public function putItems($data)
+    {
+        return $this->query($data, 'batchWriteItem');
+
+    }
+
 
     /**
      * update one item
@@ -162,11 +173,23 @@ class Dynamodb extends Orm
     {
         $data = array(
             'TableName' => $item->table(),
-            'Item' => $this->client->formatAttributes($item->toArray(false)),
+            'Item' => $this->formatAttributes($item->toArray(false)),
         );
         // add reporting right here
         $data['ReturnConsumedCapacity'] = ReturnConsumedCapacity::TOTAL;
         return $data;
+
+    }
+
+
+    /**
+     * format attributes
+     * @param $attributes
+     * @return array
+     */
+    public function formatAttributes($attributes)
+    {
+        return $this->client->formatAttributes($attributes);
 
     }
 

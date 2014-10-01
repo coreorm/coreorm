@@ -8,6 +8,7 @@ namespace CoreORM\Dao;
 
 use CoreORM\Model, CoreORM\Adaptor\Dynamodb AS Adaptor, CoreORM\Model\Dynamodb AS DModel;
 use CoreORM\Utility\Assoc;
+use PhpParser\Node\Expr\BinaryOp\Mod;
 
 class Orm extends Base
 {
@@ -209,6 +210,108 @@ class Orm extends Base
         return $model;
 
     }// end writeModel
+
+
+    /**
+     * write a bunch of models
+     * this requires the models to be
+     * a list of valid Models
+     * @param $models
+     * @param int $batchSize this determines the batch size, if 0, DO NOT use batch
+     * If batchsize is bigger than 0, the given models will NOT be inflated with data
+     * as it's impossible to do so.
+     * @param bool $allowException
+     * @return array
+     * @throws \Exception
+     */
+    public function writeModels($models, $batchSize = 1, $allowException = false)
+    {
+        $results = array();
+        $batchSize = (int) $batchSize;
+        if ($batchSize <= 1) {
+            foreach ($models as $model) {
+                if ($model instanceof Model) {
+                    try {
+                        $this->writeModel($model);
+                        $results[$model->primaryKey(true)] = array('success' => true);
+                    } catch (\Exception $e) {
+                        if ($allowException) {
+                            $results[$model->primaryKey(true)] = array(
+                                'success' => false,
+                                'error' => $e->getMessage(),
+                                'details' => $e->getTraceAsString()
+                            );
+                        } else {
+                            throw $e;
+                        }
+                    }
+                }
+            }
+            // finally, return the results back (but at the same time, models are inflated)
+            return $results;
+        }
+        // is it dynamo?
+        $model = current($models);
+        if ($model instanceof DModel) {
+            return $this->putItems($models, $batchSize, $allowException);
+        }
+        // otherwise, do batch write/insert as in one sql composed.
+        $results = array();
+        $queries = array();
+        $i = 0;
+        foreach ($models as $model) {
+            $i ++;
+            $sqlGroup = $this->adaptor()->composeWriteSQL($model, $this->adaptor()->getType());
+            $sql = $this->interpolateQuery($sqlGroup['sql'], $sqlGroup['bind']) . ';';
+            $k = (int) ceil($i / $batchSize) - 1;
+            $queries[$k][] = $sql;
+        }
+        foreach ($queries as $k => $sqlGroup) {
+            $sql = implode(PHP_EOL, $sqlGroup);
+            // run and get result out
+            try {
+                $this->query($sql);
+                $results[$k] = array('success' => true);
+            } catch (\Exception $e) {
+                if ($allowException) {
+                    $results[$k] = array(
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                        'details' => $e->getTraceAsString()
+                    );
+                } else {
+                    throw $e;
+                }
+            }
+        }
+        return $results;
+
+    }
+
+    /**
+     * Replaces any parameter placeholders in a query with the value of that
+     * parameter. Useful for debugging. Assumes anonymous parameters from
+     * $params are are in the same order as specified in $query
+     *
+     * @param string $query The sql query with parameter placeholders
+     * @param array $params The array of substitution parameters
+     * @return string The interpolated query
+     */
+    public function interpolateQuery($query, $params)
+    {
+        $keys = array();
+        # build a regular expression for each parameter
+        foreach ($params as $key => &$value) {
+            if (is_string($key)) {
+                $keys[] = '/:'.$key.'/';
+            } else {
+                $keys[] = '/[?]/';
+            }
+            $value = $this->adaptor()->quote($value);
+        }
+        $query = preg_replace($keys, $params, $query, 1, $count);
+        return $query;
+    }
 
 
     /**
@@ -426,6 +529,58 @@ class Orm extends Base
             $data[$model->primaryKey(true)] = $model;
         }
         return $data;
+
+    }
+
+    /**
+     * write a bunch of models
+     * this requires the models to be
+     * a list of valid Models
+     * @param $models
+     * @param int $batchSize this determines the batch size, max should be 25 (configurable)
+     * @param bool $allowException
+     * @return array
+     * @throws \Exception
+     */
+    public function putItems($models, $batchSize, $allowException = false)
+    {
+        // prepare batch - note the 25 limit
+        $results = array();
+        $queries = array();
+        $i = 0;
+        foreach ($models as $model) {
+            if ($model instanceof DModel) {
+                $i ++;
+                $k = (int) ceil($i / $batchSize) - 1;
+                $data = $model->toArray(false);
+                $queries[$k]['RequestItems'][$model->table()][] = array(
+                    'PutRequest' => array(
+                        'Item' => $this->adaptorDynamo()->formatAttributes($data)
+                    )
+                );
+            }
+        }
+        foreach ($queries as $k => $item) {
+            if (!empty($item)) {
+                try {
+                    $results[$k] = array(
+                        'success' => true,
+                        'result' => $this->adaptorDynamo()->putItems($item)
+                    );
+                } catch (\Exception $e) {
+                    if ($allowException) {
+                        $results[$k] = array(
+                            'success' => false,
+                            'error' => $e->getMessage(),
+                            'details' => $e->getTraceAsString()
+                        );
+                    } else {
+                        throw $e;
+                    }
+                }
+            }
+        }
+        return $results;
 
     }
 
