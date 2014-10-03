@@ -109,7 +109,7 @@ class TestCrudDynamo extends PHPUnit_Framework_TestCase
     public function testScan()
     {
         $item = new Mock();
-        $item->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, 'notification');
+        $item->querySetCondition('id', ComparisonOperator::CONTAINS, Type::STRING, 'id12345');
         $result = $this->adaptor->scanItems($item);
         $this->assertEquals(count($result->get('Items')), 2);
     }
