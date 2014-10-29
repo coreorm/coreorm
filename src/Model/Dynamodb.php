@@ -66,12 +66,7 @@ class Dynamodb extends Model
                 if (empty($this->condition)) {
                     // compose by field
                     foreach ($this->key as $field) {
-                        $type = Assoc::get($this->fields, $field . '.type');
-                        if ($type == 'int' || $type == 'integer') {
-                            $type = Type::NUMBER;
-                        } else {
-                            $type = Type::STRING;
-                        }
+                        $type = $this->dynamoDbFieldType($field);
                         $value = $this->rawGetFieldData($field, false);
                         if ($value !== false) {
                             $this->querySetCondition($field, ComparisonOperator::EQ, $type, $value);
@@ -84,12 +79,7 @@ class Dynamodb extends Model
             case self::UPDATE:
                 foreach ($this->data as $field => $value) {
                     if (!in_array($field, $this->key)) {
-                        $type = Assoc::get($this->fields, $field . '.type');
-                        if ($type == 'int' || $type == 'integer') {
-                            $type = Type::NUMBER;
-                        } else {
-                            $type = Type::STRING;
-                        }
+                        $type = $this->dynamoDbFieldType($field);
                         $opts['AttributeUpdates'][$field] = array(
                             'Value' => array($type => $value)
                         );
@@ -99,12 +89,7 @@ class Dynamodb extends Model
                 $opts['Key'] = array();
                 // retrieve from all data inside the array
                 foreach ($this->key as $field) {
-                    $type = Assoc::get($this->fields, $field . '.type');
-                    if ($type == 'int' || $type == 'integer') {
-                        $type = Type::NUMBER;
-                    } else {
-                        $type = Type::STRING;
-                    }
+                    $type = $this->dynamoDbFieldType($field);
                     $opts['Key'][$field] = array(
                         $type => $this->rawGetFieldData($field)
                     );
@@ -112,6 +97,20 @@ class Dynamodb extends Model
                 break;
         }
         return $opts;
+
+    }
+
+    protected function dynamoDbFieldType($field)
+    {
+        $type = Assoc::get($this->fields, $field . '.type');
+        if ($type == 'int' || $type == 'integer') {
+            return Type::NUMBER;
+        }
+        if ($type == 'b' || $type == 'binary') {
+            return Type::BINARY;
+        }
+        // default is string
+        return Type::S;
 
     }
 
