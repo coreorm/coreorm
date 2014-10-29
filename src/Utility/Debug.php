@@ -393,7 +393,7 @@ class Debug
     protected static function printVar($var)
     {
         ob_start();
-        var_dump($var);
+        print_r($var);
         return ob_get_clean();
 
     }
