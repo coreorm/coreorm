@@ -12,6 +12,7 @@ use CoreORM\Model;
 abstract class Pdo
 {
     const ADAPTOR_MYSQL = 'MySQL';
+    const ADAPTOR_PGSQL = 'PSQL';
     const ADAPTOR_SQLITE = 'Sqlite';
     const ADAPTOR_DYNAMODB = 'Dynamodb';
 
@@ -566,7 +567,7 @@ abstract class Pdo
      * @return array
      * @throws \CoreORM\Exception\Adaptor
      */
-    private function breakDownData($data, $tableName, $type)
+    protected function breakDownData($data, $tableName, $type)
     {
         // break down...
         if (!is_array($data) ||

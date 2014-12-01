@@ -33,7 +33,7 @@ aws_secret_access_key=<your aws secret key>
 
 For mysql database, create new db:
  ```
- model_test
+ bb
  ```
  then setup user
  ```
