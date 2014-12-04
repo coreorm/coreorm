@@ -365,7 +365,7 @@ class ModelGenerator
         $getter = implode('', $getters);
         // super class
         $superClass = $isDynamo ? 'Dynamodb' : 'Model';
-        $useDynamo = $isDynamo ? 'use CoreORM\\Model\\DynamoDb' : 'use CoreORM\\Model';
+        $useDynamo = $isDynamo ? 'use CoreORM\\Model\\Dynamodb' : 'use CoreORM\\Model';
         // compose
         return "<?php
 /**
