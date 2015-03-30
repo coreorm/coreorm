@@ -30,7 +30,7 @@ class MySQL extends Orm
         }
         $dsn = "mysql:dbname={$options['dbname']};host={$options['host']}";
         if (isset($options['port']) && !empty($options['port'])) {
-            $dsn .= ':' . $options['port'];
+            $dsn .= ';port=' . $options['port'];
         }
         // we don't want more than 1 connection to the db...
         $key = md5($dsn . $options['user'] . $options['pass']);
