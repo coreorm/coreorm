@@ -32,7 +32,8 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
                 "user" => "model",
                 "adaptor" => "MySQL",
                 "pass" => "test",
-                "host" => "127.0.0.1"
+                "host" => "127.0.0.1",
+                "port" => 3306,
             )
         ));
         setDbConfig('default_database', 'orm_test');
