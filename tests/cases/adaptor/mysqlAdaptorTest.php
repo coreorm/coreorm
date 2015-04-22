@@ -40,7 +40,7 @@ class TestPdoMySQL extends PHPUnit_Framework_TestCase
         ));
         // and both should be using the same PDO...
         $pdos = Pdo::getPdoAdaptor();
-        dump($pdos);
+        _dump($pdos);
         $this->assertEquals(count($pdos), 1);
         // now add yet a new one with different config
         new MySQL(array(

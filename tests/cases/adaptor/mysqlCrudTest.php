@@ -72,7 +72,7 @@ class TestCrudMySQL extends PHPUnit_Framework_TestCase
         $this->testInsert();
         $data = $this->adaptor->fetchAll('SELECT test FROM test');
         $this->assertEquals(count($data), 3);
-        dump($data);
+        _dump($data);
     }
 
     public function testDelete()

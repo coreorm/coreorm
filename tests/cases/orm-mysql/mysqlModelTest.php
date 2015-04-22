@@ -90,7 +90,7 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
                 }
             }
             // show it off!
-            dump($u->toJson(true));
+            _dump($u->toJson(true));
         }
         // 2.2 with limit
         $user = new User();
@@ -106,7 +106,7 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
                 }
             }
             // show it off!
-            dump($u->toJson(true));
+            _dump($u->toJson(true));
         }
         $this->assertEquals(1, count($users));
 
@@ -170,7 +170,7 @@ class TestMysqlModel extends PHPUnit_Framework_TestCase
         $this->assertEquals($c->getUserId(), $c->relationGetLogin()->getUserId());
         // then delete it...
         $this->dao->deleteModel($c);
-        dump($c->toJson(true));
+        _dump($c->toJson(true));
 
         // test batch write
         $models = array();
