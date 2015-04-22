@@ -156,7 +156,7 @@ abstract class Pdo
      */
     public function query($sql, $bind = array())
     {
-        if (debug()) {
+        if (CoreDebug()) {
             return Debug::bench('queryRawPrivate', array($sql, $bind), $this);
         }
         return $this->queryRawPrivate($sql, $bind);

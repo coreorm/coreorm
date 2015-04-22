@@ -30,14 +30,14 @@ class TestCore extends PHPUnit_Framework_TestCase
     public function testDebug()
     {
         // 1st. on
-        debug(true);
+        CoreDebug(true);
         ob_start();
         dump('test');
         $data = ob_get_clean();
         $this->assertNotEmpty($data);
 
         // 2nd off
-        debug(false);
+        CoreDebug(false);
         ob_start();
         dump('test');
         $data = ob_get_clean();

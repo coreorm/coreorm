@@ -144,7 +144,7 @@ namespace
      * @param mixed $enabled
      * @return bool
      */
-    function debug($enabled = null)
+    function CoreDebug($enabled = null)
     {
         return CoreORM\Utility\Debug::debug($enabled);
     }
