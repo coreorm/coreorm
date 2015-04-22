@@ -130,7 +130,7 @@ namespace
      * quick function for dump
      * @return mixed
      */
-    function dump()
+    function _dump()
     {
         if (CoreORM\Utility\Debug::debug()) {
             $params = (array) func_get_args();

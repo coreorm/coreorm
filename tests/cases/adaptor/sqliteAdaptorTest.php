@@ -34,7 +34,7 @@ class TestSQLite extends PHPUnit_Framework_TestCase
         ));
         // and both should be using the same PDO...
         $pdos = Pdo::getPdoAdaptor();
-        dump($pdos);
+        _dump($pdos);
         $this->assertEquals(count($pdos), 1);
         // with in-memory db there's no way to add a new one, so let's stop here :)
         // if mysql passes, this will pass
